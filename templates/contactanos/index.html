@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CONTACTANOS</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/contacto/assets/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/contacto/assets/font-awesome/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/contacto/assets/css/form-elements.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/contacto/assets/css/style.css')}}">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    
+    <style>
+        .center-form {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top content -->
+    <div class="top-content">
+        <div class="inner-bg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text">
+                        <h1><strong>HOLA</strong> Estudiante IUB! ¿tienes inquietud o dudas?</h1>
+                        <div class="description">
+                            <p>Vamos a llenar este formulario <strong>"Con datos basicos"</strong> no te preocupes, tus
+                                datos no se compartirán con terceros, comencemos!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-5 center-form">
+                    <div class="form-box">
+                        <div class="form-top">
+                            <div class="form-top-left">
+                                <h3>Contacto</h3>
+                                <p>Complete el siguiente formulario para contactarnos con usted</p>
+                            </div>
+                            <div class="form-top-right">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-bottom">
+                            <form role="form" action="" method="post" class="registration-form">
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-first-name">Nombres</label>
+                                    <input type="text" name="form-first-name" placeholder="nombres"
+                                        class="form-first-name form-control" id="form-first-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-last-name">apellidos</label>
+                                    <input type="text" name="form-last-name" placeholder="apellidos"
+                                        class="form-last-name form-control" id="form-last-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-email">Email</label>
+                                    <input type="text" name="form-email" placeholder="Email..."
+                                        class="form-email form-control" id="form-email">
+                                </div>
+                                <div class="form-group">
+                                    <label class="sr-only" for="form-about-yourself">Acerca de ti</label>
+                                    <textarea name="form-about-yourself" placeholder="acerca de ti"
+                                        class="form-about-yourself form-control" id="form-about-yourself"></textarea>
+                                </div>
+                                <button type="submit" class="btn">Enviar!</button>
+                            </form>
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2">
+                  
+            </div>
+        </div>
+    </footer>
+
+    <!-- Javascript -->
+    <script src="assets/js/jquery-1.11.1.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/jquery.backstretch.min.js"></script>
+    <script src="assets/js/scripts.js"></script>
+
+    <!--[if lt IE 10]>
+        <script src="assets/js/placeholder.js"></script>
+    <![endif]-->
+</body>
+
+</html>

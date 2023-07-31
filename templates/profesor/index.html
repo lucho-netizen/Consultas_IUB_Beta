@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link rel="stylesheet" href=" {{url_for('static', filename='css/estudiante/css/bootstrap/style.css')}} " />
+    <style>
+        .navbar .navbar-nav .nav-iten a {
+            padding: 15px;
+        }
+
+        .navbar .navbar-nav .nav-but {
+            padding: 10px;
+        }
+
+        .btn btn-outline-success {
+            color: black;
+            border-color: white;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+
+    <title>Index Estudiante</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/logo_iub.jpeg' )}}" alt="logo"
+                    style="height: 60px; width: 70px; border-radius: 15px" /></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">MIS CONSULTAS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('register_caso') }}">REALIZAR CONSULTAS</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            AJUSTES
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="">CONFIGURACIÓN</a></li>
+                            <li>
+                                <a class="dropdown-item" href="/logout">CERRAR SESIÓN</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex ms-auto">
+                    <input class="d-flex ms-auto" type="search" placeholder="BUSCAR" aria-label="Search" />
+                    <button class="btn btn-outline-success" type="submit" style="color: black; border-color: white">
+                        BUSCAR
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <br /><br /><br />
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">MIS CONSULTAS</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead class="thead-primary">
+                                <tr>
+                                    <th>NOMBRES</th>
+                                    <!-- <th>APELLIDOS</th> -->
+                                    <th>TIPO DE DOCUMENTO</th>
+                                    <th>NUMERO DE DOCUMENTO</th>
+                                    <th>PROGRAMA</th>
+                                    <th>CORREO INSTITUCIONAL</th>
+                                    <th>PROFESOR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dato in dato %}
+
+                                <tr>
+                                    <td>{{dato.0}} {{dato.1}} </td>
+
+
+                                    <td>{{dato.2}}</td>
+                                    <td>{{dato.3}}</td> <!--Numero de doc est! -->
+                                    <td>{{dato.7}}</td>
+                                    <td>{{dato.5}}</td>
+                                    <td>{{dato.4}}</td>
+
+
+
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+</body>
+
+</html>
