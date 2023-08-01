@@ -91,9 +91,9 @@
               <label for="">Elige el docente</label>
               <select name="profesor" id="profesor">
                 <option value="">Seleccionar</option>
-                {%for profesor in profesor %} 
+                {%for profe in profe %} 
                 <li>
-                <option value="{{profesor.1}}">{{profesor.1}} {{profesor.2}}</option>
+                <option value="{{ profe['nombre'] }}">{{profe['nombre'] }} {{ profe['apellido'] }}</option>
               </li>
                 {% endfor %}
               </select>

@@ -130,8 +130,13 @@ def register_caso():
         curs.execute("SELECT * FROM profesor")
         profesor = curs.fetchall()
         curs.close()
+        profe = []
+        for rows in profesor:
+            data = {"id" :rows [0],"nombres" :rows [1], "apellido":rows[2]}
+            profe.append(data)
+            
         
-        return render_template('estudiante/register.html', payload=payload, profesor=profesor)
+        return render_template('estudiante/register.html', payload=payload, profe=profe)
     except Exception as e:
         print(e)
         return jsonify({"informacion": str(e)})
