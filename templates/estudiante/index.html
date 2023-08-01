@@ -14,7 +14,8 @@
     />
     <link
       rel="stylesheet"
-      href=" {{url_for('static', filename='css/estudiante/css/bootstrap/style.css')}} "/>
+      href=" {{url_for('static', filename='css/estudiante/css/bootstrap/style.css')}} "
+    />
     <style>
       .navbar .navbar-nav .nav-iten a {
         padding: 15px;
@@ -32,10 +33,10 @@
         border-collapse: collapse;
       }
       th,
-            td {
-              text-align: center;
-              padding: 15px;
-            }
+      td {
+        text-align: center;
+        padding: 15px;
+      }
     </style>
 
     <title>Index Estudiante</title>
@@ -119,6 +120,7 @@
             <h2 class="heading-section">MIS CONSULTAS</h2>
           </div>
         </div>
+        {% if payload %}
         <div class="row">
           <div class="col-md-12">
             <div class="table-wrap">
@@ -139,32 +141,41 @@
                   {% for payload in payload %}
 
                   <tr>
-                    <td>{{payload['nombre_estudiante']}} {{ payload['apellido_estudiante'] }} </td>
-                  
+                    <td>
+                      {{payload['nombre_estudiante']}} {{
+                      payload['apellido_estudiante'] }}
+                    </td>
+
                     <td>{{payload['tipo_documento']}}</td>
-                    <td>{{payload['numero_estudiante']}}</td> <!--Numero de doc est! -->
+                    <td>{{payload['numero_estudiante']}}</td>
+                    <!--Numero de doc est! -->
                     <td>{{payload['programa']}}</td>
                     <td>{{payload['correo']}}</td>
                     <td>{{payload['fecha']}}</td>
                     <td>{{payload['nombre_profesor']}}</td>
-                    
-                    
-                  
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
+              <br>
+              <div class="pagination justify-content-center">
+                {{ pagination.info }} 
+                
+                {{ pagination.links }}
+              </div>
+              
+              {% else %}
+              <p>No se encontraron datos para el estudiante con ID {{ id }}</p>
+              {% endif %}
+
+                
               <script>
-                         
                 // Guardar los datos en el localStorage
-                var id ="{{session['id']}}";
+                var id = "{{session['id']}}";
                 var correo = "{{session['correo']}}";
-                localStorage.setItem('id', id);
-                localStorage.setItem('correo', correo);
-                
-                
-            </script>
-            
+                localStorage.setItem("id", id);
+                localStorage.setItem("correo", correo);
+              </script>
             </div>
           </div>
         </div>

@@ -4,6 +4,8 @@ from xml.sax.handler import feature_external_ges
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask.wrappers import Request
 from flask import request
+from flask_paginate import Pagination, get_page_parameter
+
 
 
 from flask_mysqldb import MySQL
@@ -223,8 +225,14 @@ def index_est():
                 'programa': row[8]
                 }
                 payload.append(data)
+            
+            #Paginación
+            page = int(request.args.get(get_page_parameter(), 1))
+            per_page = 10  # Cantidad de resultados por página
+            offset = (page - 1) * per_page
+            pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap4')
 
-            return render_template('estudiante/index.html', payload=payload, id=id)
+            return render_template('estudiante/index.html', payload=payload[offset:offset + per_page], id=id, pagination=pagination)
         except Exception as e:
             print(e)
             return jsonify({"informacion": str(e)})
