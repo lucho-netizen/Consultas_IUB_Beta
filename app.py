@@ -171,21 +171,65 @@ def register_student():
 
     
     
-@app.route('/index_est')
-def index_est():
+# @app.route('/index_est')
+# def index_est():
     
-    print(session.keys)
+#     print(session.keys)
     
 
+#     if 'id' not in session:
+#         return redirect(url_for('login_est'))
+#     else:
+#         id = session['id']
+#         correo = session ['correo']
+#         cursor = mysql.connection.cursor()
+#         cursor.execute('SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante, c.fecha, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa FROM estudiante INNER JOIN consulta c ON estudiante.id = c.id_estudiante INNER JOIN profesor ON profesor.id = c.id_profesor INNER JOIN modulo ON modulo.id_modulo = c.id_modulo WHERE id_estudiante=%s',(id,))
+#         modulo = cursor.fetchall()
+#         return render_template('estudiante/index.html', modulo = modulo, id = id, correo = correo)
+
+
+    
+@app.route('/index_est')
+def index_est():
+    print(session.keys())
     if 'id' not in session:
         return redirect(url_for('login_est'))
     else:
-        id = session['id']
-        correo = session ['correo']
-        cursor = mysql.connection.cursor()
-        cursor.execute('SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante, c.fecha, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa FROM estudiante INNER JOIN consulta c ON estudiante.id = c.id_estudiante INNER JOIN profesor ON profesor.id = c.id_profesor INNER JOIN modulo ON modulo.id_modulo = c.id_modulo WHERE id_estudiante=%s',(id,))
-        modulo = cursor.fetchall()
-        return render_template('estudiante/index.html', modulo = modulo, id = id, correo = correo)
+        try:
+            id = session['id']
+            cursor = mysql.connection.cursor()
+            cursor.execute('''SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante,
+                          c.fecha, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa 
+                          FROM estudiante
+                          INNER JOIN consulta c ON estudiante.id = c.id_estudiante
+                          INNER JOIN profesor ON profesor.id = c.id_profesor
+                          INNER JOIN modulo ON modulo.id_modulo = c.id_modulo
+                          WHERE id_estudiante=%s''', (id,))
+        
+            modulo = cursor.fetchall()
+
+            cursor.close()
+            payload = []
+            for row in modulo:
+                data = {
+                'nombre_estudiante': row[0],
+                'apellido_estudiante': row[1],
+                'tipo_documento': row[2],
+                'numero_estudiante': row[3],
+                'fecha': row[4],
+                'nombre_profesor': row[5],
+                'correo': row[6],
+                'nombre_modulo': row[7],
+                'programa': row[8]
+                }
+                payload.append(data)
+
+            return render_template('estudiante/index.html', payload=payload, id=id)
+        except Exception as e:
+            print(e)
+            return jsonify({"informacion": str(e)})
+
+
 
 
 @app.route('/update_profile')

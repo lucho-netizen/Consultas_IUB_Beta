@@ -136,18 +136,17 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for modulo in modulo %}
+                  {% for payload in payload %}
 
                   <tr>
-                    <td>{{modulo.0}} {{modulo.1}} </td>
-
-                    
-                    <td>{{modulo.2}}</td>
-                    <td>{{modulo.3}}</td> <!--Numero de doc est! -->
-                    <td>{{modulo.7}}</td>
-                    <td>{{modulo.6}}</td>
-                    <td>{{modulo.4}}</td>
-                    <td>{{modulo.5}}</td>
+                    <td>{{payload['nombre_estudiante']}} {{ payload['apellido_estudiante'] }} </td>
+                  
+                    <td>{{payload['tipo_documento']}}</td>
+                    <td>{{payload['numero_estudiante']}}</td> <!--Numero de doc est! -->
+                    <td>{{payload['programa']}}</td>
+                    <td>{{payload['correo']}}</td>
+                    <td>{{payload['fecha']}}</td>
+                    <td>{{payload['nombre_profesor']}}</td>
                     
                     
                   
