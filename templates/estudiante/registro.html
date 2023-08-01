@@ -84,22 +84,28 @@
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name"></label>
 									<select value="tipo" name="tipo">
-										{% for tipo in tipo %}
-										<option value="{{tipo.1}}">{{tipo.1}}</option>
+										<option value="">Seleccione</option>
+										{% for doc in docs %} 
+										<li>
+										
+										<option value="{{ doc['tipo'] }}">{{ doc['tipo'] }}</option>
+									</li>
 										{% endfor %}
 								</div>
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name"></label>
 									<input type="text" name="documento" placeholder="numero documento"
-										class="form-last-name form-control" id="form-documento">
+										class="form-last-name form-control" id="form-documento" max="10" min="10">
 
 								</div>
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name">Programas</label>
 									<select value="programa" name="programa">
-										{% for programa in programa %}
 										<option value="">Seleccione</option>
-										<option value="{{programa.1}}">{{programa.1}}</option>
+										{% for program in program %}
+									<li>
+										<option value="{{ program['nombre'] }}">{{ program['nombre'] }}</option>
+									</li>
 										{% endfor %}
 								</div>
 

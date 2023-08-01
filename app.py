@@ -71,17 +71,63 @@ def login_profe():
 def contacto():
     return render_template('contactanos/index.html')
 
-@app.route('/registro') #registro_URL
+# @app.route('/register_caso')  # Redireccionar Caso
+# def register_caso():
+#     try:
+#         cursor = mysql.connection.cursor()
+#         cursor.execute("SELECT * FROM modulo")
+#         modulos = cursor.fetchall()
+#         cursor.close()
+        
+#         payload = []
+#         for row in modulos:
+#             moduls = {'id': row[0], 'nombre_modulo': row[2]}
+#             payload.append(moduls)
+            
+#         curs = mysql.connection.cursor()
+#         curs.execute("SELECT * FROM profesor")
+#         profesor = curs.fetchall()
+#         curs.close()
+#         profe = []
+#         for rows in profesor:
+#             data = {"id" :rows [0],"nombres" :rows [1], "apellido":rows[2]}
+#             profe.append(data)
+            
+        
+#         return render_template('estudiante/register.html', payload=payload, profe=profe)
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"informacion": str(e)})
+    
+
+@app.route('/registro') #registro_URL_Estudiante
 def registro():
-    cursor = mysql.connection.cursor()
-    cursor.execute('SELECT * FROM programas')
-    programa=cursor.fetchall()
-    cursor.close()
-    curs = mysql.connection.cursor()
-    curs.execute('SELECT  * FROM tipo')
-    tipo = curs.fetchall()
-    print(tipo)
-    return render_template('estudiante/registro.html', json_programa = jsonify(programa), tipo = tipo)
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM programas')
+        programa=cursor.fetchall()
+        cursor.close()
+        program = []
+        for rows in programa:
+                data = {"id": rows[0], "nombre": rows[1]}
+                program.append(data)
+                # print(program)
+        
+        curs = mysql.connection.cursor()
+        curs.execute('SELECT * FROM tipo')
+        tipo = curs.fetchall()
+        curs.close()
+        docs = []
+        for row in tipo:
+            date = {"id": row[0], "tipo":row[1]}
+            docs.append(date)
+            # print(docs)
+        
+        return render_template('estudiante/registro.html', program=program, docs=docs)
+    except Exception as e:
+        print(e)
+        return jsonify({"informacion": str(e)})
+    
 
 @app.route('/login_est') #Login_Est_URL
 def login_est():
@@ -134,7 +180,7 @@ def register_caso():
         curs.close()
         profe = []
         for rows in profesor:
-            data = {"id" :rows [0],"nombres" :rows [1], "apellido":rows[2]}
+            data = {"id" :rows [0],"nombre" :rows[1], "apellido":rows[2]}
             profe.append(data)
             
         
@@ -157,11 +203,8 @@ def register_student():
         documento = request.form['documento']
         programa = request.form['programa']
         cursor = mysql.connection.cursor()
-        # cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)',('3', nombre, apellido, tipo, programa, correo, contraseña, documento))
-        cursor.execute('INSERT INTO estudiante(id,nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s,%s, %s, %s, %s, %s, %s, %s)',('5',str(nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
-        # cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)',(str(nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
-        #Este es((Aquí))
-
+        cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)',(str(nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
+        
         mysql.connection.commit()
         cursor.close()
         msg = 'La consulta se ha realizado correctamente!'
@@ -171,26 +214,8 @@ def register_student():
 
 
 
-    
-    
-# @app.route('/index_est')
-# def index_est():
-    
-#     print(session.keys)
-    
-
-#     if 'id' not in session:
-#         return redirect(url_for('login_est'))
-#     else:
-#         id = session['id']
-#         correo = session ['correo']
-#         cursor = mysql.connection.cursor()
-#         cursor.execute('SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante, c.fecha, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa FROM estudiante INNER JOIN consulta c ON estudiante.id = c.id_estudiante INNER JOIN profesor ON profesor.id = c.id_profesor INNER JOIN modulo ON modulo.id_modulo = c.id_modulo WHERE id_estudiante=%s',(id,))
-#         modulo = cursor.fetchall()
-#         return render_template('estudiante/index.html', modulo = modulo, id = id, correo = correo)
-
-
-    
+  
+  
 @app.route('/index_est')
 def index_est():
     print(session.keys())
@@ -200,13 +225,7 @@ def index_est():
         try:
             id = session['id']
             cursor = mysql.connection.cursor()
-            cursor.execute('''SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante,
-                          c.fecha, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa 
-                          FROM estudiante
-                          INNER JOIN consulta c ON estudiante.id = c.id_estudiante
-                          INNER JOIN profesor ON profesor.id = c.id_profesor
-                          INNER JOIN modulo ON modulo.id_modulo = c.id_modulo
-                          WHERE id_estudiante=%s''', (id,))
+            cursor.execute('SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE id_estudiante=%s', (id,))
         
             modulo = cursor.fetchall()
 
@@ -363,12 +382,10 @@ def res_cons():
         msg = 'La consulta se ha realizado correctamente!'
     return redirect(url_for('index_est', msg=msg))
 
-        
 
 
 
-
-# Cerrar sesion
+ # Cerrar sesion
 @app.route('/logout')
 def logout():
     # removemos los datos de la sesión para cerrar sesión
