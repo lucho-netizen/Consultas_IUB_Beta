@@ -1,7 +1,7 @@
 from tempfile import template
 from MySQLdb.cursors import Cursor
 from xml.sax.handler import feature_external_ges
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask.wrappers import Request
 from flask import request
 
@@ -13,9 +13,9 @@ import http.cookiejar
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = 'Rolex.b1'
 app.config['MYSQL_DB'] = 'consultas_iub'
 
 
@@ -79,7 +79,7 @@ def registro():
     curs.execute('SELECT  * FROM tipo')
     tipo = curs.fetchall()
     print(tipo)
-    return render_template('estudiante/registro.html', programa = programa, tipo = tipo)
+    return render_template('estudiante/registro.html', json_programa = jsonify(programa), tipo = tipo)
 
 @app.route('/login_est') #Login_Est_URL
 def login_est():
@@ -115,15 +115,28 @@ def register():
 
 @app.route('/register_caso')  # Redireccionar Caso
 def register_caso():
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM modulo")
-    modulo = cursor.fetchall()
-    cursor.close()
-    curs = mysql.connection.cursor()
-    curs.execute("SELECT * FROM profesor")
-    profesor = curs.fetchall()
-    curs.close()
-    return render_template('estudiante/register.html', modulo= modulo, profesor= profesor)
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM modulo")
+        modulos = cursor.fetchall()
+        cursor.close()
+        
+        payload = []
+        for row in modulos:
+            moduls = {'id': row[0], 'nombre_modulo': row[2]}
+            payload.append(moduls)
+            
+        curs = mysql.connection.cursor()
+        curs.execute("SELECT * FROM profesor")
+        profesor = curs.fetchall()
+        curs.close()
+        
+        return render_template('estudiante/register.html', payload=payload, profesor=profesor)
+    except Exception as e:
+        print(e)
+        return jsonify({"informacion": str(e)})
+
+
 
 @app.route('/register_student', methods=['POST'])
 def register_student():
@@ -165,7 +178,7 @@ def index_est():
         id = session['id']
         correo = session ['correo']
         cursor = mysql.connection.cursor()
-        cursor.execute('SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa FROM estudiante INNER JOIN consulta ON estudiante.id = consulta.id_estudiante INNER JOIN profesor ON profesor.id = consulta.id_profesor INNER JOIN modulo ON modulo.id_modulo = consulta.id_modulo WHERE id_estudiante=%s',(id,))
+        cursor.execute('SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante, c.fecha, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa FROM estudiante INNER JOIN consulta c ON estudiante.id = c.id_estudiante INNER JOIN profesor ON profesor.id = c.id_profesor INNER JOIN modulo ON modulo.id_modulo = c.id_modulo WHERE id_estudiante=%s',(id,))
         modulo = cursor.fetchall()
         return render_template('estudiante/index.html', modulo = modulo, id = id, correo = correo)
 

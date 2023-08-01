@@ -91,9 +91,10 @@
               <label for="">Elige el docente</label>
               <select name="profesor" id="profesor">
                 <option value="">Seleccionar</option>
-                {%for profesor in profesor %}
+                {%for profesor in profesor %} 
+                <li>
                 <option value="{{profesor.1}}">{{profesor.1}} {{profesor.2}}</option>
-
+              </li>
                 {% endfor %}
               </select>
             </div>
@@ -102,9 +103,10 @@
                 <label col-2 col-form-label for="modulo">modulo</label>
                 <select name="modulo" id="modulo">
                   <option value="">Seleccionar</option>
-                  {%for modulo in modulo %}
-                  <option value="{{modulo.2}}">{{modulo.2}}</option>
-
+                  {%for moduls in payload %}
+                  <li>
+                  <option value="{{ moduls['nombre_modulo'] }} ">{{ moduls['nombre_modulo'] }}</option>
+                </li>
                   {% endfor %}
                 </select>
               </div>
