@@ -67,8 +67,8 @@ def contacto():
     return render_template('contactanos/index.html')
 
 
-
-@app.route('/registro') #registro_URL_Estudiante
+#registro_URL_Estudiante
+@app.route('/registro') 
 def registro():
     try:
         cursor = mysql.connection.cursor()
@@ -97,12 +97,14 @@ def registro():
         return jsonify({"informacion": str(e)})
     
 
-@app.route('/login_est') #Login_Est_URL
+#Login_Est_URL
+@app.route('/login_est') 
 def login_est():
     return render_template('estudiante/login.html')
 
 
 
+# Index Profesor
 @app.route('/index_profe', methods=['GET', 'POST']) 
 def index_profe():
     id_profe = session['id']
@@ -163,12 +165,15 @@ def index_profe():
 
 
 
-@app.route('/register')  # Registrar profesor
+# Registrar profesor
+@app.route('/register')  
 def register():
     datos = ['', '', '', '']
     return render_template('admin/register.html', datos=datos)
 
 
+
+# Registrar caso Estudiante
 @app.route('/register_caso')  # Redireccionar Caso
 def register_caso():
     try:
@@ -198,7 +203,7 @@ def register_caso():
         return jsonify({"informacion": str(e)})
 
 
-
+# Registrar Estudiante
 @app.route('/register_student', methods=['POST'])
 def register_student():
     msg= ''
@@ -219,11 +224,7 @@ def register_student():
     return redirect(url_for('index_est', msg=msg))
 
 
-
-
-
-  
-  
+# Index Estudiante
 @app.route('/index_est', methods=['GET', 'POST'])
 def index_est():
     id_est = session['id']
@@ -290,13 +291,13 @@ def index_est():
 
 
 
-
+# Actulizar Perfil Estudiante (Pendiente)
 @app.route('/update_profile')
 def update_profile():
     return render_template('estudiante/update_profile.html')
 
 
-
+# Login Admin
 @app.route('/login', methods=['POST'])
 def login():
     msg = ''
@@ -414,6 +415,8 @@ def res_cons():
         msg = 'La consulta se ha realizado correctamente!'
     return redirect(url_for('index_est', msg=msg))
 
+
+# Registrar Profesor (Pendiente)
 
 
 
