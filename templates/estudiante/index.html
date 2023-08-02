@@ -65,7 +65,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#"
+              <a class="nav-link active" aria-current="page" href="index_est"
                 >MIS CONSULTAS</a
               >
             </li>
@@ -94,21 +94,14 @@
               </ul>
             </li>
           </ul>
-          <form class="d-flex ms-auto">
-            <input
-              class="d-flex ms-auto"
-              type="search"
-              placeholder="BUSCAR"
-              aria-label="Search"
-            />
-            <button
-              class="btn btn-outline-success"
-              type="submit"
-              style="color: black; border-color: white"
-            >
-              BUSCAR
+          <form class="d-flex ms-auto" action="{{ url_for('index_est') }}" method="GET">
+            <input class="d-flex ms-auto" type="search" name="search" id="search" placeholder="BUSCAR"
+                aria-label="Search" />
+            <button class="btn btn-outline-success" type="submit"
+                style="color: black; border-color: white">
+                BUSCAR
             </button>
-          </form>
+        </form>
         </div>
       </div>
     </nav>
@@ -120,70 +113,80 @@
             <h2 class="heading-section">MIS CONSULTAS</h2>
           </div>
         </div>
-        {% if payload %}
+        {% if payload_search %}
         <div class="row">
-          <div class="col-md-12">
-            <div class="table-wrap">
-              <table class="table">
-                <thead class="thead-primary">
-                  <tr>
-                    <th>NOMBRE</th>
-                    <!-- <th>APELLIDOS</th> -->
-                    <th>TIPO DE DOCUMENTO</th>
-                    <th>NUMERO DE DOCUMENTO</th>
-                    <th>PROGRAMA</th>
-                    <th>CORREO INSTITUCIONAL</th>
-                    <th>DIA & HORA</th>
-                    <th>PROFESOR</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for payload in payload %}
-
-                  <tr>
-                    <td>
-                      {{payload['nombre_estudiante']}} {{
-                      payload['apellido_estudiante'] }}
-                    </td>
-
-                    <td>{{payload['tipo_documento']}}</td>
-                    <td>{{payload['numero_estudiante']}}</td>
-                    <!--Numero de doc est! -->
-                    <td>{{payload['programa'] }}</td>
-                    <td>{{payload['correo']}}</td>
-                    <td>{{payload['fecha']}}</td>
-                    <td>{{payload['profesor']}}
-                      {{ payload['apellido_profesor']}}
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              <br>
-              <div class="pagination justify-content-center">
-                {{ pagination.info }} 
-                
-                {{ pagination.links }}
-              </div>
-              
-              {% else %}
-              <br><br><br><br><br>
-             <center> <p>No se encontraron datos para el estudiante con ID {{ id }}</p></center>
-              {% endif %}
-
-                
-              <script>
-                // Guardar los datos en el localStorage
-                var id = "{{session['id']}}";
-                var correo = "{{session['correo']}}";
-                localStorage.setItem("id", id);
-                localStorage.setItem("correo", correo);
-              </script>
+            <div class="col-md-12">
+                <div class="table-wrap">
+                    <table class="table table-bordered">
+                        <thead class="thead-primary">
+                            <tr>
+                                <th>NOMBRE</th>
+                                <th>TIPO DE DOCUMENTO</th>
+                                <th>NUMERO DE DOCUMENTO</th>
+                                <th>PROGRAMA</th>
+                                <th>CORREO INSTITUCIONAL</th>
+                                <th>DIA</th>
+                                <th>DESCRIPCION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payload in payload_search %}
+                            <tr>
+                                <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
+                                <td>{{ payload['tipo_documento'] }}</td>
+                                <td>{{ payload['numero_estudiante'] }}</td>
+                                <td>{{ payload['programa'] }}</td>
+                                <td>{{ payload['correo'] }}</td>
+                                <td>{{ payload['fecha'] }}</td>
+                                <td>{{ payload['descripcion'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </section>
+        {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-wrap">
+                    <table class="table table-bordered">
+                        <thead class="thead-primary">
+                            <tr>
+                                <th>NOMBRE</th>
+                                <th>TIPO DE DOCUMENTO</th>
+                                <th>NUMERO DE DOCUMENTO</th>
+                                <th>PROGRAMA</th>
+                                <th>CORREO INSTITUCIONAL</th>
+                                <th>DIA</th>
+                                <th>DESCRIPCION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payload in payload %}
+                            <tr>
+                                <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
+                                <td>{{ payload['tipo_documento'] }}</td>
+                                <td>{{ payload['numero_estudiante'] }}</td>
+                                <td>{{ payload['programa'] }}</td>
+                                <td>{{ payload['correo'] }}</td>
+                                <td>{{ payload['fecha'] }}</td>
+                                <td>{{ payload['descripcion'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <br>
+                    <div class="pagination justify-content-center">
+                        {{ pagination.info }}
+                        {{ pagination.links }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script

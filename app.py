@@ -102,38 +102,65 @@ def login_est():
     return render_template('estudiante/login.html')
 
 
-@app.route('/index_profe') 
+
+@app.route('/index_profe', methods=['GET', 'POST']) 
 def index_profe():
     id_profe = session['id']
-    print(index_profe)  
+    if request.method == 'GET':
+        search = request.args.get('search')
+        cursor = mysql.connection.cursor()
+        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, 
+                       c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON 
+                       c.id_profesor = p.id WHERE c.descripcion LIKE %s AND c.id_profesor=%s''', (f"%{search}%", id_profe))
+
+
+        datos = cursor.fetchall()
+        cursor.close()
+        payload_search = []
+        for rows in datos:
+            result = {
+                'nombre_estudiante': rows[0],
+                'apellido_estudiante': rows[1],
+                'tipo_documento': rows[2],
+                'numero_estudiante': rows[3],
+                'programa': rows[4],
+                'correo': rows[5],
+                'fecha': rows[6],
+                'descripcion': rows[9]
+            }
+            payload_search.append(result)
+
     try:    
         cursor = mysql.connection.cursor() 
-        cursor.execute('SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE id_profesor=%s', (id_profe,))
+        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, 
+                       p.apellido, c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p 
+                       ON c.id_profesor = p.id WHERE id_profesor=%s''', (id_profe,))
         dato = cursor.fetchall()
         cursor.close()
         payload = []
         for row in dato:
             result = {
-            'nombre_estudiante': row[0],
-            'apellido_estudiante': row[1],
-            'tipo_documento': row[2],
-            'numero_estudiante': row[3],
-            'programa': row[4],
-            'correo': row[5],
-            'fecha': row[6],
+                'nombre_estudiante': row[0],
+                'apellido_estudiante': row[1],
+                'tipo_documento': row[2],
+                'numero_estudiante': row[3],
+                'programa': row[4],
+                'correo': row[5],
+                'fecha': row[6],
+                'descripcion':row[9]
             }
             payload.append(result)
-            
-            #Paginación
+
         page = int(request.args.get(get_page_parameter(), 1))
         per_page = 10  # Cantidad de resultados por página
         offset = (page - 1) * per_page
         pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
-        
-        return render_template('profesor/index.html', payload=payload[offset:offset + per_page], id_profe=id_profe, pagination=pagination)
+
+        return render_template('profesor/index.html', payload=payload[offset:offset + per_page], id_profe=id_profe, pagination=pagination, payload_search=payload_search)
     except Exception as e:
-            print(e)
-            return jsonify({"informacion": str(e)})
+        print(e)
+        return jsonify({"informacion": str(e)})
+
 
 
 @app.route('/register')  # Registrar profesor
@@ -197,16 +224,39 @@ def register_student():
 
   
   
-@app.route('/index_est')
+@app.route('/index_est', methods=['GET', 'POST'])
 def index_est():
+    id_est = session['id']
     print(session.keys())
     if 'id' not in session:
         return redirect(url_for('login_est'))
     else:
-        try:
-            id = session['id']
+        if request.method == 'GET':
+            search = request.args.get('search')
             cursor = mysql.connection.cursor()
-            cursor.execute('SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE id_estudiante=%s', (id,))
+            cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, 
+                    c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON 
+                    c.id_profesor = p.id WHERE c.descripcion LIKE %s AND c.id_estudiante=%s''', (f"%{search}%", id_est))
+
+            datos = cursor.fetchall()
+            cursor.close()
+            payload_search = []
+            for rows in datos:
+                result = {
+                    'nombre_estudiante': rows[0],
+                    'apellido_estudiante': rows[1],
+                    'tipo_documento': rows[2],
+                    'numero_estudiante': rows[3],
+                    'programa': rows[4],
+                    'correo': rows[5],
+                    'fecha': rows[6],
+                    'descripcion': rows[9]
+                }
+                payload_search.append(result)
+        try:
+            cursor = mysql.connection.cursor() 
+            cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, c.descripcion FROM consulta c 
+                           INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE c.id_estudiante=%s''', (id_est,))
         
             modulo = cursor.fetchall()
 
@@ -222,7 +272,8 @@ def index_est():
                 'correo': row[5],
                 'fecha': row[6],
                 'profesor': row[7],
-                'apellido_profesor':row[8]
+                'apellido_profesor':row[8],
+                'descripcion':row[9]
                 }
                 payload.append(data)
             
@@ -232,7 +283,7 @@ def index_est():
             offset = (page - 1) * per_page
             pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
 
-            return render_template('estudiante/index.html', payload=payload[offset:offset + per_page], id=id, pagination=pagination)
+            return render_template('estudiante/index.html', payload=payload[offset:offset + per_page], id_est=id_est, pagination=pagination, payload_search=payload_search)
         except Exception as e:
             print(e)
             return jsonify({"informacion": str(e)})

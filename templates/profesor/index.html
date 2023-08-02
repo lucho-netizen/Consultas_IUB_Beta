@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-    <link rel="stylesheet" href=" {{url_for('static', filename='css/estudiante/css/bootstrap/style.css')}} " />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estudiante/css/bootstrap/style.css') }}" />
     <style>
         .navbar .navbar-nav .nav-iten a {
             padding: 15px;
@@ -35,14 +35,14 @@
         }
     </style>
 
-    <title>Index Estudiante</title>
+    <title>Index Profesor</title>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/logo_iub.jpeg' )}}" alt="logo"
-                    style="height: 60px; width: 70px; border-radius: 15px" /></a>
+            <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/logo_iub.jpeg' )}}"
+                    alt="logo" style="height: 60px; width: 70px; border-radius: 15px" /></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -52,10 +52,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">MIS CONSULTAS</a>
+                        <a class="nav-link active" aria-current="page" href="index_profe">MIS CONSULTAS</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('register_caso') }}">REALIZAR CONSULTAS</a>
+                        <a class="nav-link active" href="#">REALIZAR CONSULTAS</a>
                     </li>
 
                     <li class="nav-item dropdown">
@@ -71,9 +71,11 @@
                         </ul>
                     </li>
                 </ul>
-                <form class="d-flex ms-auto">
-                    <input class="d-flex ms-auto" type="search" placeholder="BUSCAR" aria-label="Search" />
-                    <button class="btn btn-outline-success" type="submit" style="color: black; border-color: white">
+                <form class="d-flex ms-auto" action="{{ url_for('index_profe') }}" method="GET">
+                    <input class="d-flex ms-auto" type="search" name="search" id="search" placeholder="BUSCAR"
+                        aria-label="Search" />
+                    <button class="btn btn-outline-success" type="submit"
+                        style="color: black; border-color: white">
                         BUSCAR
                     </button>
                 </form>
@@ -88,57 +90,78 @@
                     <h2 class="heading-section">MIS CONSULTAS</h2>
                 </div>
             </div>
-            {% if payload %}
+            {% if payload_search %}
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-wrap">
-                        <table class="table">
+                        <table class="table table-bordered">
                             <thead class="thead-primary">
                                 <tr>
                                     <th>NOMBRE</th>
-                                    <!-- <th>APELLIDOS</th> -->
                                     <th>TIPO DE DOCUMENTO</th>
                                     <th>NUMERO DE DOCUMENTO</th>
                                     <th>PROGRAMA</th>
                                     <th>CORREO INSTITUCIONAL</th>
                                     <th>DIA</th>
-                                    
+                                    <th>DESCRIPCION</th>
                                 </tr>
                             </thead>
                             <tbody>
-                  {% for payload in payload %}
-
-                  <tr>
-                    <td>
-                      {{payload['nombre_estudiante']}} {{
-                      payload['apellido_estudiante'] }}
-                    </td>
-
-                    <td>{{payload['tipo_documento']}}</td>
-                    <td>{{payload['numero_estudiante']}}</td>
-                    <!--Numero de doc est! -->
-                    <td>{{payload['programa'] }}</td>
-                    <td>{{payload['correo']}}</td>
-                    <td>{{payload['fecha']}}</td>
-
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-              <br>
-              <div class="pagination justify-content-center">
-                {{ pagination.info }} 
-                
-                {{ pagination.links }}
-              </div>
-              
-              {% else %}
-              <br><br><br><br><br>
-             <center> <p>No se encontraron datos para el estudiante con ID {{ id }}</p></center>
-              {% endif %}
+                                {% for payload in payload_search %}
+                                <tr>
+                                    <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
+                                    <td>{{ payload['tipo_documento'] }}</td>
+                                    <td>{{ payload['numero_estudiante'] }}</td>
+                                    <td>{{ payload['programa'] }}</td>
+                                    <td>{{ payload['correo'] }}</td>
+                                    <td>{{ payload['fecha'] }}</td>
+                                    <td>{{ payload['descripcion'] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+            {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table table-bordered">
+                            <thead class="thead-primary">
+                                <tr>
+                                    <th>NOMBRE</th>
+                                    <th>TIPO DE DOCUMENTO</th>
+                                    <th>NUMERO DE DOCUMENTO</th>
+                                    <th>PROGRAMA</th>
+                                    <th>CORREO INSTITUCIONAL</th>
+                                    <th>DIA</th>
+                                    <th>DESCRIPCION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payload in payload %}
+                                <tr>
+                                    <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
+                                    <td>{{ payload['tipo_documento'] }}</td>
+                                    <td>{{ payload['numero_estudiante'] }}</td>
+                                    <td>{{ payload['programa'] }}</td>
+                                    <td>{{ payload['correo'] }}</td>
+                                    <td>{{ payload['fecha'] }}</td>
+                                    <td>{{ payload['descripcion'] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <br>
+                        <div class="pagination justify-content-center">
+                            {{ pagination.info }}
+                            {{ pagination.links }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </section>
 
