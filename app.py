@@ -115,7 +115,6 @@ def index_profe():
                        c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON 
                        c.id_profesor = p.id WHERE c.descripcion LIKE %s AND c.id_profesor=%s''', (f"%{search}%", id_profe))
 
-
         datos = cursor.fetchall()
         cursor.close()
         payload_search = []
