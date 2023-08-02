@@ -5,9 +5,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask.wrappers import Request
 from flask import request
 from flask_paginate import Pagination, get_page_parameter
-
-
-
 from flask_mysqldb import MySQL
 from datetime import date, datetime, timedelta
 from flask import make_response
@@ -54,11 +51,9 @@ def index_admin():
     print(profesor)
     cursor.close()
     curs = mysql.connection.cursor()
-    curs.execute('SELECT AVG(id_profesor) FROM consulta WHERE id_profesor=1')
+    curs.execute('SELECT id_profesor, COUNT(*) AS repeticiones FROM consulta GROUP BY id_profesor')
     cons = curs.fetchone()
     print(cons)
-    
-
     return render_template('admin/index.html', profesor = profesor, cons = cons)
 
 
@@ -71,34 +66,7 @@ def login_profe():
 def contacto():
     return render_template('contactanos/index.html')
 
-# @app.route('/register_caso')  # Redireccionar Caso
-# def register_caso():
-#     try:
-#         cursor = mysql.connection.cursor()
-#         cursor.execute("SELECT * FROM modulo")
-#         modulos = cursor.fetchall()
-#         cursor.close()
-        
-#         payload = []
-#         for row in modulos:
-#             moduls = {'id': row[0], 'nombre_modulo': row[2]}
-#             payload.append(moduls)
-            
-#         curs = mysql.connection.cursor()
-#         curs.execute("SELECT * FROM profesor")
-#         profesor = curs.fetchall()
-#         curs.close()
-#         profe = []
-#         for rows in profesor:
-#             data = {"id" :rows [0],"nombres" :rows [1], "apellido":rows[2]}
-#             profe.append(data)
-            
-        
-#         return render_template('estudiante/register.html', payload=payload, profe=profe)
-#     except Exception as e:
-#         print(e)
-#         return jsonify({"informacion": str(e)})
-    
+
 
 @app.route('/registro') #registro_URL_Estudiante
 def registro():
@@ -136,23 +104,37 @@ def login_est():
 
 @app.route('/index_profe') 
 def index_profe():
-    users = session['id']
-    print(users)   
-    cursor = mysql.connection.cursor() 
-    cursor.execute('SELECT estudiante.nombre AS nombre_estudiante, estudiante.apellido AS apellido_estudiante, estudiante.tipo_documento, estudiante.numero_estudiante, profesor.nombre AS nombre_profesor, estudiante.correo, modulo.nombre_modulo, estudiante.programa FROM estudiante INNER JOIN consulta ON estudiante.id = consulta.id_estudiante INNER JOIN profesor ON profesor.id = consulta.id_profesor INNER JOIN modulo ON modulo.id_modulo = consulta.id_modulo WHERE id_profesor=%s',(users,))
-    dato = cursor.fetchall()
-    cursor.close()
-    datos = []
-    sacar_datos = {}
-    for resultado in dato:
-        contenido = {
-            'id':resultado[0],
-            'nombre': resultado[1],
-            'apellido': resultado[2],
+    id_profe = session['id']
+    print(index_profe)  
+    try:    
+        cursor = mysql.connection.cursor() 
+        cursor.execute('SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE id_profesor=%s', (id_profe,))
+        
+        dato = cursor.fetchall()
+        cursor.close()
+        payload = []
+        for row in dato:
+            result = {
+            'nombre_estudiante': row[0],
+            'apellido_estudiante': row[1],
+            'tipo_documento': row[2],
+            'numero_estudiante': row[3],
+            'programa': row[4],
+            'correo': row[5],
+            'fecha': row[6],
+            }
+            payload.append(result)
             
-        }
-    curs = mysql.connection.cursor()
-    return render_template('profesor/index.html', dato = dato)
+            #Paginación
+        page = int(request.args.get(get_page_parameter(), 1))
+        per_page = 10  # Cantidad de resultados por página
+        offset = (page - 1) * per_page
+        pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
+        
+        return render_template('profesor/index.html', payload=payload[offset:offset + per_page], id_profe=id_profe, pagination=pagination)
+    except Exception as e:
+            print(e)
+            return jsonify({"informacion": str(e)})
 
 
 @app.route('/register')  # Registrar profesor
@@ -237,11 +219,11 @@ def index_est():
                 'apellido_estudiante': row[1],
                 'tipo_documento': row[2],
                 'numero_estudiante': row[3],
-                'fecha': row[4],
-                'nombre_profesor': row[5],
-                'correo': row[6],
-                'nombre_modulo': row[7],
-                'programa': row[8]
+                'programa': row[4],
+                'correo': row[5],
+                'fecha': row[6],
+                'profesor': row[7],
+                'apellido_profesor':row[8]
                 }
                 payload.append(data)
             
@@ -249,7 +231,7 @@ def index_est():
             page = int(request.args.get(get_page_parameter(), 1))
             per_page = 10  # Cantidad de resultados por página
             offset = (page - 1) * per_page
-            pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap4')
+            pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
 
             return render_template('estudiante/index.html', payload=payload[offset:offset + per_page], id=id, pagination=pagination)
         except Exception as e:

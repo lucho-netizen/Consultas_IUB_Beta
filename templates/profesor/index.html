@@ -88,40 +88,54 @@
                     <h2 class="heading-section">MIS CONSULTAS</h2>
                 </div>
             </div>
+            {% if payload %}
             <div class="row">
                 <div class="col-md-12">
                     <div class="table-wrap">
                         <table class="table">
                             <thead class="thead-primary">
                                 <tr>
-                                    <th>NOMBRES</th>
+                                    <th>NOMBRE</th>
                                     <!-- <th>APELLIDOS</th> -->
                                     <th>TIPO DE DOCUMENTO</th>
                                     <th>NUMERO DE DOCUMENTO</th>
                                     <th>PROGRAMA</th>
                                     <th>CORREO INSTITUCIONAL</th>
-                                    <th>PROFESOR</th>
+                                    <th>DIA</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for dato in dato %}
+                  {% for payload in payload %}
 
-                                <tr>
-                                    <td>{{dato.0}} {{dato.1}} </td>
+                  <tr>
+                    <td>
+                      {{payload['nombre_estudiante']}} {{
+                      payload['apellido_estudiante'] }}
+                    </td>
 
+                    <td>{{payload['tipo_documento']}}</td>
+                    <td>{{payload['numero_estudiante']}}</td>
+                    <!--Numero de doc est! -->
+                    <td>{{payload['programa'] }}</td>
+                    <td>{{payload['correo']}}</td>
+                    <td>{{payload['fecha']}}</td>
 
-                                    <td>{{dato.2}}</td>
-                                    <td>{{dato.3}}</td> <!--Numero de doc est! -->
-                                    <td>{{dato.7}}</td>
-                                    <td>{{dato.5}}</td>
-                                    <td>{{dato.4}}</td>
-
-
-
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <br>
+              <div class="pagination justify-content-center">
+                {{ pagination.info }} 
+                
+                {{ pagination.links }}
+              </div>
+              
+              {% else %}
+              <br><br><br><br><br>
+             <center> <p>No se encontraron datos para el estudiante con ID {{ id }}</p></center>
+              {% endif %}
                     </div>
                 </div>
             </div>

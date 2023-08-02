@@ -127,13 +127,13 @@
               <table class="table">
                 <thead class="thead-primary">
                   <tr>
-                    <th>NOMBRES</th>
+                    <th>NOMBRE</th>
                     <!-- <th>APELLIDOS</th> -->
                     <th>TIPO DE DOCUMENTO</th>
                     <th>NUMERO DE DOCUMENTO</th>
                     <th>PROGRAMA</th>
                     <th>CORREO INSTITUCIONAL</th>
-                    <th>FECHA CITA</th>
+                    <th>DIA & HORA</th>
                     <th>PROFESOR</th>
                   </tr>
                 </thead>
@@ -149,10 +149,12 @@
                     <td>{{payload['tipo_documento']}}</td>
                     <td>{{payload['numero_estudiante']}}</td>
                     <!--Numero de doc est! -->
-                    <td>{{payload['programa']}}</td>
+                    <td>{{payload['programa'] }}</td>
                     <td>{{payload['correo']}}</td>
                     <td>{{payload['fecha']}}</td>
-                    <td>{{payload['nombre_profesor']}}</td>
+                    <td>{{payload['profesor']}}
+                      {{ payload['apellido_profesor']}}
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
