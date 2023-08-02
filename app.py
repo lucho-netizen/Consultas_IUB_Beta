@@ -109,7 +109,6 @@ def index_profe():
     try:    
         cursor = mysql.connection.cursor() 
         cursor.execute('SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE id_profesor=%s', (id_profe,))
-        
         dato = cursor.fetchall()
         cursor.close()
         payload = []
