@@ -43,7 +43,8 @@ def base():
     return render_template('admin/home.html')
 
 
-@app.route('/index_admin')
+# Index Admin
+@app.route('/index_admin') 
 def index_admin():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM profesor')
@@ -133,7 +134,7 @@ def index_profe():
 
     try:    
         cursor = mysql.connection.cursor() 
-        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, 
+        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, CONVERT(c.fecha, DATETIME) AS fecha, p.nombre, 
                        p.apellido, c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p 
                        ON c.id_profesor = p.id WHERE id_profesor=%s''', (id_profe,))
         dato = cursor.fetchall()

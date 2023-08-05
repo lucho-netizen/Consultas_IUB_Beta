@@ -104,6 +104,7 @@
                                     <th>CORREO INSTITUCIONAL</th>
                                     <th>DIA</th>
                                     <th>DESCRIPCION</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -124,43 +125,65 @@
                 </div>
             </div>
             {% else %}
-            <div class="row">
+            <div class="row" style="display: flex; overflow-y:auto" >
                 <div class="col-md-12">
                     <div class="table-wrap">
                         <table class="table table-bordered">
                             <thead class="thead-primary">
                                 <tr>
                                     <th>NOMBRE</th>
-                                    <th>TIPO DE DOCUMENTO</th>
-                                    <th>NUMERO DE DOCUMENTO</th>
+                                    <!-- <th>TIPO DEDOCUMENTO</th> -->
+                                    <!-- <th>DOCUMENTO</th> -->
                                     <th>PROGRAMA</th>
                                     <th>CORREO INSTITUCIONAL</th>
                                     <th>DIA</th>
                                     <th>DESCRIPCION</th>
+                                    <th>ACEPTAR</th>
+                                    <th>DECLINAR</th>
+                                    <th>EDITAR</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for payload in payload %}
                                 <tr>
                                     <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
-                                    <td>{{ payload['tipo_documento'] }}</td>
-                                    <td>{{ payload['numero_estudiante'] }}</td>
+                                    <!-- <td witdth="90"> {{payload['tipo_documento'] }}</td> -->
+                                    <!-- <td>{{ payload['numero_estudiante'] }}</td> -->
                                     <td>{{ payload['programa'] }}</td>
                                     <td>{{ payload['correo'] }}</td>
-                                    <td>{{ payload['fecha'] }}</td>
-                                    <td>{{ payload['descripcion'] }}</td>
+                                    <td width="130">{{ payload['fecha'] }}</td>
+                                    <td style="overflow-y: auto;">{{ payload['descripcion'] }}</td>
+                                    <td width="120">
+                                        <form action="/aceptar/{{payload[0]}}" method="get">
+                                            <button type="button" class="btn btn-primary" name="aceptar" value="aceptar">Aceptar</button>
+                                        </form>
+                                    </td>
+                                        <td width="120">
+                                            <form action="/declinar/{{payload[0]}}" method="get">
+                                            <buton type="buton" class="btn btn-danger" value="declinar">Declinar</buton>
+                                            </form> 
+                                        </td>   
+                                        <td width="120">
+                                            <form action="/editar/{{payload[0]}}" method="post">
+                                                <button type="submit" class="btn btn-success">Editar</button>
+                                            </form>
+                                        
+
+                                    
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         <br>
-                        <div class="pagination justify-content-center">
-                            {{ pagination.info }}
-                            {{ pagination.links }}
+                        
                         </div>
                     </div>
+                    
                 </div>
             </div>
+            <div class="pagination justify-content-center">
+                {{ pagination.info }}
+                {{ pagination.links }}
             {% endif %}
         </div>
     </section>
