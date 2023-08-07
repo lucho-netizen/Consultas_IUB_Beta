@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Actualizar Consulta</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/estudiante/assets/bootstrap/css/bootstrap.min.css')}}">
+	<link rel="stylesheet"
+		href="{{ url_for('static', filename='assets/estudiante/assets/font-awesome/css/font-awesome.min.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/estudiante/assets/css/form-elements.css')}}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/estudiante/assets/css/style.css')}}">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+	<!-- Favicon and touch icons -->
+	<link rel="shortcut icon" href="assets/ico/iub_logo.jpg">
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+	<link rel="apple-touch-icon-precomposed" href="assets/ico/iub_logo.jpg">
+
+	<style>
+		.center-form {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- Top content -->
+	<div class="top-content">
+		<div class="inner-bg">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-8 col-sm-offset-2 text">
+						
+						
+					</div>
+				</div>
+
+				<div class="col-sm-5 center-form">
+					<div class="form-box">
+						
+							<div class="form-top-center">
+								<center>
+									<h1 style="display: flexbox; font-family: Courier New, Courier, 'monospace';"><strong>Actualizar Consulta</strong></h1>
+								</center>
+								
+							</div>
+							
+						
+						{% if payload_search %}
+						<div class="form-bottom">
+							<form name="form" action="/update_res_cons" method="post" class="registration-form">
+							{% for payload in payload_search %}
+								<div class="form-group">
+									
+									<br>
+									<input type="hidden" name="nombre_estudiante" value="{{ payload['nombre_estudiante'] }}" readonly
+										class="form-first-name form-control" id="form-first-name">
+								</div>
+								<div class="form-group">
+									<label>Nombre Completo</label>
+									<input type="text" name="nombre_completo" value="{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}" readonly
+										class="form-first-name form-control" id="form-first-name">
+								</div>
+								<div class="form-group">
+									<label>Programa</label>
+									<input type="text" name="programa" value="{{ payload['programa'] }}" readonly
+										class="form-last-name form-control" id="form-documento" max="10" min="10">
+
+								</div>
+								<div class="form-group">
+									<label for="form-last-name">Fecha Cita</label>
+									<input type="datetime-local" name="fecha" value="{{ payload['fecha'] }}" 
+										class="form-email form-control" id="form-email">
+								</div>
+								<div class="form-group">
+									<input type="hidden" name="profesor" value="{{ payload['profesor'] }}" 
+										class="form-last-name form-control" id="form-password">
+								</div>
+								<div class="form-group">
+									<label>Profesor</label>
+									<input type="text" value="{{ payload['profesor'] }} {{ payload['apellido_profesor']}}" 
+										class="form-last-name form-control" id="form-password">
+								</div>
+								<div class="form-group">
+									<label for="form-last-name">Descripcion Consulta</label>
+									<input type="text" name="descripcion" value="{{ payload['descripcion'] }}"
+										class="form-last-name form-control" id="form-password">
+								</div>
+								<div class="form-group">
+									<label>Modalidad</label>
+									<br>
+									<select name="modalidad" id="modalidad">
+										<option value="">Seleccionar</option>
+										
+										<option value="Presencial">Presencial</option>
+										<option value="Virtual">Virtual</option>
+								
+									  
+									<select>
+								<div class="form-group">
+									<label>Estado</label>
+									<br>
+									<select name="estado" id="estado" style="display: flexbox;">
+										<option value="">Seleccionar</option>
+										
+										<option value="Declinar">Declinar</option>
+										<option value="Aceptar">Aceptar</option>
+								
+									  
+									<select>
+								</div>
+								<button type="submit" class="btn">Actualizar</button>
+								{% endfor %}
+							</form>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Footer -->
+	<footer>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-2">
+
+				</div>
+			</div>
+	</footer>
+
+	<!-- Javascript -->
+	<script src="assets/js/jquery-1.11.1.min.js"></script>
+	<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+	<script src="assets/js/jquery.backstretch.min.js"></script>
+	<script src="assets/js/scripts.js"></script>
+
+	<!--[if lt IE 10]>
+        <script src="assets/js/placeholder.js"></script>
+    <![endif]-->
+</body>
+
+</html>

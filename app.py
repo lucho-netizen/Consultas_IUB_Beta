@@ -112,7 +112,7 @@ def index_profe():
     if request.method == 'GET':
         search = request.args.get('search')
         cursor = mysql.connection.cursor()
-        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, 
+        cursor.execute('''SELECT c.id_consulta, est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, 
                        c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON 
                        c.id_profesor = p.id WHERE c.descripcion LIKE %s AND c.id_profesor=%s''', (f"%{search}%", id_profe))
 
@@ -121,20 +121,21 @@ def index_profe():
         payload_search = []
         for rows in datos:
             result = {
-                'nombre_estudiante': rows[0],
-                'apellido_estudiante': rows[1],
-                'tipo_documento': rows[2],
-                'numero_estudiante': rows[3],
-                'programa': rows[4],
-                'correo': rows[5],
-                'fecha': rows[6],
-                'descripcion': rows[9]
+                'id':rows[0],
+                'nombre_estudiante': rows[1],
+                'apellido_estudiante': rows[2],
+                'tipo_documento': rows[3],
+                'numero_estudiante': rows[4],
+                'programa': rows[5],
+                'correo': rows[6],
+                'fecha': rows[7],
+                'descripcion': rows[8]
             }
             payload_search.append(result)
 
     try:    
         cursor = mysql.connection.cursor() 
-        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, CONVERT(c.fecha, DATETIME) AS fecha, p.nombre, 
+        cursor.execute('''SELECT c.id_consulta, est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, CONVERT(c.fecha, DATETIME) AS fecha, p.nombre, 
                        p.apellido, c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p 
                        ON c.id_profesor = p.id WHERE id_profesor=%s''', (id_profe,))
         dato = cursor.fetchall()
@@ -142,14 +143,15 @@ def index_profe():
         payload = []
         for row in dato:
             result = {
-                'nombre_estudiante': row[0],
-                'apellido_estudiante': row[1],
-                'tipo_documento': row[2],
-                'numero_estudiante': row[3],
-                'programa': row[4],
-                'correo': row[5],
-                'fecha': row[6],
-                'descripcion':row[9]
+                'id':row[0],
+                'nombre_estudiante': row[1],
+                'apellido_estudiante': row[2],
+                'tipo_documento': row[3],
+                'numero_estudiante': row[4],
+                'programa': row[5],
+                'correo': row[6],
+                'fecha': row[7],
+                'descripcion': row[10]
             }
             payload.append(result)
 
@@ -228,6 +230,7 @@ def register_student():
 @app.route('/index_est', methods=['GET', 'POST'])
 def index_est():
     id_est = session['id']
+    print(id_est)
     print(session.keys())
     if 'id' not in session:
         return redirect(url_for('login_est'))
@@ -245,13 +248,12 @@ def index_est():
             for rows in datos:
                 result = {
                     'nombre_estudiante': rows[0],
-                    'apellido_estudiante': rows[1],
-                    'tipo_documento': rows[2],
-                    'numero_estudiante': rows[3],
-                    'programa': rows[4],
-                    'correo': rows[5],
-                    'fecha': rows[6],
-                    'descripcion': rows[9]
+                'apellido_estudiante': rows[1],
+                'programa': rows[4],
+                'fecha': rows[6],
+                'profesor': rows[7],
+                'apellido_profesor':rows[8],
+                'descripcion':rows[9]
                 }
                 payload_search.append(result)
         try:
@@ -267,10 +269,7 @@ def index_est():
                 data = {
                 'nombre_estudiante': row[0],
                 'apellido_estudiante': row[1],
-                'tipo_documento': row[2],
-                'numero_estudiante': row[3],
                 'programa': row[4],
-                'correo': row[5],
                 'fecha': row[6],
                 'profesor': row[7],
                 'apellido_profesor':row[8],
@@ -375,13 +374,68 @@ def login_estu():
             return render_template('estudiante/login.html', msg=msg)
 
         
-@app.route('/ver_casos')
-def ver_casos():
-    # user = session['identificacion']
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM profesor")
-    v_casos = cursor.fetchall()
-    return render_template('profesor/ver_casos.html', v_casos = v_casos)
+@app.route('/mis_consultas')
+def mis_consultas():
+     id_est = session['id']
+     print(id_est)
+     print(session.keys())
+     if 'id' not in session:
+        return redirect(url_for('login_est'))
+     else:
+        if request.method == 'GET':
+            search = request.args.get('search')
+            cursor = mysql.connection.cursor()
+            cursor.execute('''SELECT e.nombre, e.apellido, r.fecha as FECHA, c.descripcion AS DESCRIPCION, r.modalidad, p.nombre AS PROFESOR, p.apellido FROM res_consulta r INNER JOIN estudiante e ON
+                           r.id_estudiante = e.id INNER JOIN consulta c ON r.id_consulta = c.id_consulta INNER JOIN profesor p ON r.id_profesor = p.id WHERE c.descripcion LIKE %s AND c.id_estudiante=%s''', (f"%{search}%", id_est))
+
+            datos = cursor.fetchall()
+            cursor.close()
+            payload_search = []
+            for rows in datos:
+                result = {
+                    'nombre_estudiante': rows[0],
+                    'apellido_estudiante': rows[1],
+                    'fecha': rows[2],
+                    'descripcion':rows[3],
+                    'modalidad':rows[4],
+                    'nombre_profesor': rows[5],
+                    'apellido_profesor': rows[6]
+                }
+                payload_search.append(result)
+        try:
+            cursor = mysql.connection.cursor() 
+            cursor.execute('''
+                           SELECT e.nombre, e.apellido, r.fecha as FECHA, c.descripcion AS DESCRIPCION, r.modalidad, p.nombre AS PROFESOR, p.apellido, r.estado FROM res_consulta r INNER JOIN estudiante e ON
+                           r.id_estudiante = e.id INNER JOIN consulta c ON r.id_consulta = c.id_consulta INNER JOIN profesor p ON r.id_profesor = p.id WHERE r.id_estudiante=%s''', (id_est,))
+        
+            modulo = cursor.fetchall()
+            print(modulo)
+
+            cursor.close()
+            payload = []
+            for row in modulo:
+                data = {
+                'nombre_estudiante': row[0],
+                'apellido_estudiante': row[1],
+                'fecha': row[2],
+                'descripcion':row[3],
+                'modalidad':row[4],
+                'nombre_profesor': row[5],
+                'apellido_profesor': row[6],
+                'estado': row[7]
+                }
+                payload.append(data)
+            
+            #Paginación
+            page = int(request.args.get(get_page_parameter(), 1))
+            per_page = 10  # Cantidad de resultados por página
+            offset = (page - 1) * per_page
+            pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
+
+            return render_template('estudiante/res_consulta.html', payload=payload[offset:offset + per_page], id_est=id_est, pagination=pagination, payload_search=payload_search)
+        except Exception as e:
+            print(e)
+            return jsonify({"informacion": str(e)})
 
 
 @app.route('/res_cons', methods=['POST']) #Registrar Consulta estudiante
@@ -414,6 +468,132 @@ def res_cons():
         cur.close()
         msg = 'La consulta se ha realizado correctamente!'
     return redirect(url_for('index_est', msg=msg))
+
+
+
+# Actualizar consulta profesor 
+@app.route('/update/<int:id>', methods=['GET'])
+def update(id):
+    global id_consulta
+    id_consulta =0
+    id_consulta= id
+    print(id)
+    ''''No es obligación utilizar el session del profesor, solo estoy trayendo la info 
+        de la página principal, que si lo tiene, en está caso solo utilizo la sentencia
+        para que me muestre el dato correspondido'''
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, c.descripcion FROM consulta c 
+                           INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE c.id_consulta=%s''', (id_consulta,))
+        
+        consulta = cursor.fetchall()
+        cursor.close()
+        payload_search = []
+        for rows in consulta:
+            result = {
+            'nombre_estudiante': rows[0],
+            'apellido_estudiante': rows[1],
+            'programa': rows[4],
+            'fecha': rows[6],
+            'profesor': rows[7],
+            'apellido_profesor':rows[8],
+            'descripcion':rows[9]
+            }
+            payload_search.append(result)
+        cursor.close()
+            
+        return render_template('profesor/editar_consulta.html', payload_search=payload_search)
+    except Exception as e:
+            return render_template('error.html', error_message=str(e))
+
+
+@app.route('/aceptar/<int:id>', methods=['POST']) #Aceptar consulta
+def aceptar(id):
+    id_consulta = id
+    print(id_consulta)
+    cursor = mysql.connection.cursor()
+    cursor.execute('''SELECT * from consulta WHERE id_consulta=%s''', (id,))
+    cons = cursor.fetchone()
+    cursor.close()
+    print(cons)
+    if cons:
+        id_const = cons[0]
+        id_est = cons[1]
+        id_profe = cons[2]
+        fecha = cons[3]
+        descripcion = cons[4]
+        curs = mysql.connection.cursor()
+        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, estado) VALUES (%s, %s, %s, %s, %s, %s)''',(id_consulta, id_est, id_profe, fecha, descripcion, 'Aceptado'))
+        msg = 'Se actualizo la consuta correctamente    '
+        mysql.connection.commit()
+        curs.close()
+        msg = 'La consulta se ha realizado correctamente!'
+    return redirect(url_for('index_profe', msg=msg))
+
+
+@app.route('/declinar/<int:id>', methods=['POST']) #Declinar consulta
+def declinar(id):
+    id_consulta = id
+    print(id_consulta)
+    cursor = mysql.connection.cursor()
+    cursor.execute('''SELECT * from consulta WHERE id_consulta=%s''', (id,))
+    cons = cursor.fetchone()
+    cursor.close()
+    print(cons)
+    if cons:
+        id_const = cons[0]
+        id_est = cons[1]
+        id_profe = cons[2]
+        fecha = cons[3]
+        descripcion = cons[4]
+        curs = mysql.connection.cursor()
+        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, estado) VALUES (%s, %s, %s, %s, %s, %s)''',(id_consulta, id_est, id_profe, fecha, descripcion, 'Declinado'))
+        msg = 'Se actualizo la consuta correctamente    '
+        mysql.connection.commit()
+        curs.close()
+        msg = 'La consulta se ha actualizado correctamente!'
+    return redirect(url_for('index_profe', msg=msg))
+
+    
+
+@app.route('/update_res_cons', methods=['POST']) #Actualiza i/u guardar Consulta estudiante by profesor
+def update_res_cons():
+    
+    if request.method == 'POST':
+        
+        nombre_est = request.form['nombre_estudiante']
+        profesor = request.form['profesor']
+        fecha = request.form['fecha']
+        descripcion = request.form['descripcion']
+        modalidad = request.form['modalidad']
+        estado = request.form['estado']
+        cons = mysql.connection.cursor()
+        cons.execute('SELECT * FROM profesor WHERE nombre = %s', [str(profesor)])
+        result = cons.fetchone()
+        if result:
+            id_profesor = result[0]
+            print(id_profesor)
+        cons.close()
+        con = mysql.connection.cursor()
+        con.execute('SELECT * FROM estudiante WHERE nombre = %s', [str(nombre_est)])
+        res = con.fetchone()
+        if res:
+            global id_est #Id_estudiante
+            id_est = res[0]
+            print(id_est)
+        con.close()
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, modalidad, estado) VALUES 
+                    (%s, %s, %s, %s, %s, %s, %s)''',(str(id_consulta), str(id_est), str(id_profesor), str(fecha), str(descripcion), str(modalidad), str(estado)))
+        msg = 'Se actualizo la consuta correctamente    '
+        mysql.connection.commit()
+        cur.close()
+        msg = 'La consulta se ha realizado correctamente!'
+    return redirect(url_for('index_profe', msg=msg))
+
+
+
+
 
 
 # Registrar Profesor (Pendiente)

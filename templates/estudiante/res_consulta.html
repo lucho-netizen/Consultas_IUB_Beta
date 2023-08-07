@@ -4,7 +4,6 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Index Estudiante</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -40,7 +39,7 @@
       }
     </style>
 
-    
+    <title>Index Estudiante</title>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
@@ -66,7 +65,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{{ url_for('index_est') }}"
+              <a class="nav-link active" aria-current="page" href="index_est"
                 >MIS CONSULTAS</a
               >
             </li>
@@ -76,10 +75,10 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{{ url_for('mis_consultas') }}"
-                >RESULTADOS</a
-              >
-            </li>
+                <a class="nav-link active" href="{{ url_for('mis_consultas') }}"
+                  >RESULTADOS</a
+                >
+              </li>
 
             <li class="nav-item dropdown">
               <a
@@ -100,7 +99,7 @@
               </ul>
             </li>
           </ul>
-          <form class="d-flex ms-auto" action="{{ url_for('index_est') }}" method="GET">
+          <form class="d-flex ms-auto" action="{{ url_for('mis_consultas') }}" method="GET">
             <input class="d-flex ms-auto" type="search" name="search" id="search" placeholder="BUSCAR"
                 aria-label="Search" />
             <button class="btn btn-outline-success" type="submit"
@@ -116,7 +115,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-md-6 text-center mb-5">
-            <h2 class="heading-section">MIS CONSULTAS</h2>
+            <h2 class="heading-section">RESPUETAS</h2>
           </div>
         </div>
         {% if payload_search %}
@@ -126,23 +125,21 @@
                     <table class="table table-bordered">
                         <thead class="thead-primary">
                             <tr>
-                              <th>NOMBRE</th>
-                              <th>PROGRAMA</th>
-                              <th>DIA</th>
-                              <th>ASUNTO</th>
-                              <th>PROFESOR</th>
+                                <th>NOMBRE</th>
+                                <th>DIA</th>
+                                <th>DESCRIPCION</th>
+                                <th>MODALIDAD</th>
+                                <th>PROFESOR</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for payload in payload_search %}
                             <tr>
                                 <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
-                                <td>{{ payload['programa'] }}</td>
-                                <!-- <td>{{ payload['correo'] }}</td> -->
                                 <td>{{ payload['fecha'] }}</td>
                                 <td>{{ payload['descripcion'] }}</td>
-                                 <td>{{ payload['profesor'] }} {{ payload['apellido_profesor'] }}</td>
-                            </tr>
+                                <td>{{ payload['modalidad'] }}</td>
+                                <td>{{ payload['nombre_profesor'] }} {{ payload['apellido_profesor'] }}</td>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -157,22 +154,22 @@
                         <thead class="thead-primary">
                             <tr>
                                 <th>NOMBRE</th>
-                                <th>PROGRAMA</th>
                                 <th>DIA</th>
-                                <th>ASUNTO</th>
+                                <th>DESCRIPCION</th>
+                                <th>MODALIDAD</th>
                                 <th>PROFESOR</th>
-                                
+                                <th>ESTADO</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for payload in payload %}
                             <tr>
-                              <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
-                              <td>{{ payload['programa'] }}</td>
-                              <!-- <td>{{ payload['correo'] }}</td> -->
-                              <td>{{ payload['fecha'] }}</td>
-                              <td>{{ payload['descripcion'] }}</td>
-                              <td>{{ payload['profesor'] }} {{ payload['apellido_profesor'] }}</td>
+                                <td>{{ payload['nombre_estudiante'] }} {{ payload['apellido_estudiante'] }}</td>
+                                <td>{{ payload['fecha'] }}</td>
+                                <td>{{ payload['descripcion'] }}</td>
+                                <td>{{ payload['modalidad'] }}</td>
+                                <td>{{ payload['nombre_profesor'] }} {{ payload['apellido_profesor'] }}</td>
+                                <td>{{ payload['estado'] }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

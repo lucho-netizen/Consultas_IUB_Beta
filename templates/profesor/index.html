@@ -154,20 +154,21 @@
                                     <td width="130">{{ payload['fecha'] }}</td>
                                     <td style="overflow-y: auto;">{{ payload['descripcion'] }}</td>
                                     <td width="120">
-                                        <form action="/aceptar/{{payload[0]}}" method="get">
-                                            <button type="button" class="btn btn-primary" name="aceptar" value="aceptar">Aceptar</button>
+                                        <form action="/aceptar/{{payload['id']}}" method="POST">
+                                            <button type="submit" class="btn btn-primary" name="aceptar" value="aceptar">Aceptar</button>
                                         </form>
                                     </td>
                                         <td width="120">
-                                            <form action="/declinar/{{payload[0]}}" method="get">
-                                            <buton type="buton" class="btn btn-danger" value="declinar">Declinar</buton>
+                                        <form action="/declinar/{{payload['id']}}" method="POST">
+                                            <button type="submit" class="btn btn-danger" name="declinar" value="declinar">Declinar</buton>
                                             </form> 
                                         </td>   
                                         <td width="120">
-                                            <form action="/editar/{{payload[0]}}" method="post">
+                                            <form action="/update/{{payload['id']}}" method="get">
+                                                <input type="hidden" name="id" value="{{payload['id']}}">
                                                 <button type="submit" class="btn btn-success">Editar</button>
                                             </form>
-                                        
+                                        </td>
 
                                     
                                 </tr>
