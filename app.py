@@ -529,7 +529,7 @@ def aceptar(id):
         curs.close()
         msg = 'La consulta se ha realizado correctamente!'
     return redirect(url_for('index_profe', msg=msg))
-
+    
 
 @app.route('/declinar/<int:id>', methods=['POST']) #Declinar consulta
 def declinar(id):
