@@ -523,7 +523,7 @@ def aceptar(id):
         fecha = cons[3]
         descripcion = cons[4]
         curs = mysql.connection.cursor()
-        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, estado) VALUES (%s, %s, %s, %s, %s, %s)''',(id_consulta, id_est, id_profe, fecha, descripcion, 'Aceptado'))
+        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, modalidad, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)''',(id_consulta, id_est, id_profe, fecha, descripcion, 'Presencial', 'Aceptado'))
         msg = 'Se actualizo la consuta correctamente    '
         mysql.connection.commit()
         curs.close()
