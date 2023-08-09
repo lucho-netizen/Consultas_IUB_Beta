@@ -69,7 +69,7 @@ CREATE TABLE `consulta` (
   CONSTRAINT `consulta_ibfk_7` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `consulta_ibfk_8` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `consulta_ibfk_9` FOREIGN KEY (`id_modulo`) REFERENCES `modulo` (`id_modulo`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +78,7 @@ CREATE TABLE `consulta` (
 
 LOCK TABLES `consulta` WRITE;
 /*!40000 ALTER TABLE `consulta` DISABLE KEYS */;
-INSERT INTO `consulta` VALUES (1,1,1,'2022-00-00 00:00:00','Oe',1),(6,1,2,'2023-08-09 16:53:00','5656',3);
+INSERT INTO `consulta` VALUES (1,1,1,'2022-00-00 00:00:00','Oe',1),(6,1,2,'2023-08-09 16:53:00','5656',3),(7,1,2,'2023-09-09 22:11:11','dsdsd',2),(10,1,2,'2023-08-24 20:38:00','no se',5),(11,2,2,'2023-08-24 20:38:00','A ver ',3),(12,1,1,'2023-08-08 08:00:00','Profe, tengo me ayuda con un proyeto pls',3);
 /*!40000 ALTER TABLE `consulta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -196,19 +196,20 @@ DROP TABLE IF EXISTS `res_consulta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `res_consulta` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_consultas` int NOT NULL,
-  `fecha` datetime(6) NOT NULL,
-  `modalidad` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `asunto` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `identificacion_estudiante` int NOT NULL,
-  `identificacion_profesor` int NOT NULL,
+  `id` mediumint NOT NULL AUTO_INCREMENT,
+  `id_consulta` int DEFAULT NULL,
+  `id_estudiante` int DEFAULT NULL,
+  `id_profesor` int DEFAULT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `asunto` varchar(255) DEFAULT NULL,
+  `modalidad` varchar(30) DEFAULT NULL,
+  `estado` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `id_consultas` (`id_consultas`),
-  KEY `identificacion_estudiante` (`identificacion_estudiante`,`identificacion_profesor`),
-  KEY `identificacion_profesor` (`identificacion_profesor`),
-  CONSTRAINT `res_consulta_ibfk_3` FOREIGN KEY (`identificacion_profesor`) REFERENCES `profesor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `id_estudiante` (`id_estudiante`),
+  KEY `id_profesor` (`id_profesor`),
+  CONSTRAINT `res_consulta_ibfk_1` FOREIGN KEY (`id_estudiante`) REFERENCES `estudiante` (`id`),
+  CONSTRAINT `res_consulta_ibfk_2` FOREIGN KEY (`id_profesor`) REFERENCES `profesor` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,6 +218,7 @@ CREATE TABLE `res_consulta` (
 
 LOCK TABLES `res_consulta` WRITE;
 /*!40000 ALTER TABLE `res_consulta` DISABLE KEYS */;
+INSERT INTO `res_consulta` VALUES (1,12,1,1,'2023-08-08 08:00:00','Profe, tengo me ayuda con un proyeto pls',NULL,'Aceptado'),(2,11,2,2,'2023-08-24 20:38:00','A ver ','Presencial','Aceptar');
 /*!40000 ALTER TABLE `res_consulta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -276,4 +278,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-01 16:56:27
+-- Dump completed on 2023-08-08 20:48:40
