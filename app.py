@@ -171,6 +171,15 @@ def res_profesor():
     return render_template('admin/register.html')
 
 
+# Registrar profesor
+@app.route('/register')  
+def register():
+    datos = ['', '', '', '']
+    return render_template('admin/register.html', datos=datos)
+
+
+
+
 @app.route('/register')
 # Registrar caso Estudiante
 @app.route('/register_caso')  # Redireccionar Caso
@@ -204,7 +213,7 @@ def register_caso():
 # Registrar Estudiante
 @app.route('/register_student', methods=['POST'])
 def register_student():
-    msg = ''
+    msg= ''
     if request.method == 'POST':
         correo = request.form['correo']
         contraseña = request.form['contraseña']
@@ -214,17 +223,19 @@ def register_student():
         documento = request.form['documento']
         programa = request.form['programa']
         cursor = mysql.connection.cursor()
-        cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)', (str(
-            nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
-
+        cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)',(str(nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
+        
         mysql.connection.commit()
+        new_student_id = cursor.lastrowid
+
+        # Agrega el ID a la sesión
+        session['id'] = new_student_id
         cursor.close()
-        msg = 'Te has registrado correctamente!'
-    return redirect(url_for('index_est'))
+        msg = 'La consulta se ha realizado correctamente!'
+    return redirect(url_for('index_est', msg=msg))
+
 
 # Registrar Profesor
-
-
 @app.route('/register_profesor', methods=['POST'])
 def register_profesor():
     msg = ''
