@@ -22,7 +22,6 @@ mysql = MySQL(app)
 app.secret_key = 'ghjklñ'
 
 
-
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -44,7 +43,7 @@ def base():
 
 
 # Index Admin
-@app.route('/index_admin') 
+@app.route('/index_admin')
 def index_admin():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM profesor')
@@ -52,61 +51,61 @@ def index_admin():
     print(profesor)
     cursor.close()
     curs = mysql.connection.cursor()
-    curs.execute('SELECT id_profesor, COUNT(*) AS repeticiones FROM consulta GROUP BY id_profesor')
+    curs.execute(
+        'SELECT id_profesor, COUNT(*) AS repeticiones FROM consulta GROUP BY id_profesor')
     cons = curs.fetchone()
     print(cons)
-    return render_template('admin/index.html', profesor = profesor, cons = cons)
+    return render_template('admin/index.html', profesor=profesor, cons=cons)
 
 
-@app.route('/login_profe') #Login_Profe_URL
+@app.route('/login_profe')  # Login_Profe_URL
 def login_profe():
     return render_template('profesor/login.html')
 
 
-@app.route('/contacto') #contactanos_URL
+@app.route('/contacto')  # contactanos_URL
 def contacto():
     return render_template('contactanos/index.html')
 
 
-#registro_URL_Estudiante
-@app.route('/registro') 
+# registro_URL_Estudiante
+@app.route('/registro')
 def registro():
     try:
         cursor = mysql.connection.cursor()
         cursor.execute('SELECT * FROM programas')
-        programa=cursor.fetchall()
+        programa = cursor.fetchall()
         cursor.close()
         program = []
         for rows in programa:
-                data = {"id": rows[0], "nombre": rows[1]}
-                program.append(data)
-                # print(program)
-        
+            data = {"id": rows[0], "nombre": rows[1]}
+            program.append(data)
+            # print(program)
+
         curs = mysql.connection.cursor()
         curs.execute('SELECT * FROM tipo')
         tipo = curs.fetchall()
         curs.close()
         docs = []
         for row in tipo:
-            date = {"id": row[0], "tipo":row[1]}
+            date = {"id": row[0], "tipo": row[1]}
             docs.append(date)
             # print(docs)
-        
+
         return render_template('estudiante/registro.html', program=program, docs=docs)
     except Exception as e:
         print(e)
         return jsonify({"informacion": str(e)})
-    
 
-#Login_Est_URL
-@app.route('/login_est') 
+
+# Login_Est_URL
+@app.route('/login_est')
 def login_est():
     return render_template('estudiante/login.html')
 
 
-
 # Index Profesor
-@app.route('/index_profe', methods=['GET', 'POST']) 
+@app.route('/index_profe', methods=['GET', 'POST'])
 def index_profe():
     id_profe = session['id']
     if request.method == 'GET':
@@ -121,7 +120,7 @@ def index_profe():
         payload_search = []
         for rows in datos:
             result = {
-                'id':rows[0],
+                'id': rows[0],
                 'nombre_estudiante': rows[1],
                 'apellido_estudiante': rows[2],
                 'tipo_documento': rows[3],
@@ -133,8 +132,8 @@ def index_profe():
             }
             payload_search.append(result)
 
-    try:    
-        cursor = mysql.connection.cursor() 
+    try:
+        cursor = mysql.connection.cursor()
         cursor.execute('''SELECT c.id_consulta, est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, CONVERT(c.fecha, DATETIME) AS fecha, p.nombre, 
                        p.apellido, c.descripcion FROM consulta c INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p 
                        ON c.id_profesor = p.id WHERE id_profesor=%s''', (id_profe,))
@@ -143,7 +142,7 @@ def index_profe():
         payload = []
         for row in dato:
             result = {
-                'id':row[0],
+                'id': row[0],
                 'nombre_estudiante': row[1],
                 'apellido_estudiante': row[2],
                 'tipo_documento': row[3],
@@ -158,7 +157,8 @@ def index_profe():
         page = int(request.args.get(get_page_parameter(), 1))
         per_page = 10  # Cantidad de resultados por página
         offset = (page - 1) * per_page
-        pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
+        pagination = Pagination(page=page, per_page=per_page, total=len(
+            payload), css_framework='bootstrap5')
 
         return render_template('profesor/index.html', payload=payload[offset:offset + per_page], id_profe=id_profe, pagination=pagination, payload_search=payload_search)
     except Exception as e:
@@ -166,15 +166,12 @@ def index_profe():
         return jsonify({"informacion": str(e)})
 
 
-
-# Registrar profesor
-@app.route('/register')  
-def register():
-    datos = ['', '', '', '']
-    return render_template('admin/register.html', datos=datos)
+@app.route('/res_profesor')
+def res_profesor():
+    return render_template('admin/register.html')
 
 
-
+@app.route('/register')
 # Registrar caso Estudiante
 @app.route('/register_caso')  # Redireccionar Caso
 def register_caso():
@@ -183,22 +180,21 @@ def register_caso():
         cursor.execute("SELECT * FROM modulo")
         modulos = cursor.fetchall()
         cursor.close()
-        
+
         payload = []
         for row in modulos:
             moduls = {'id': row[0], 'nombre_modulo': row[2]}
             payload.append(moduls)
-            
+
         curs = mysql.connection.cursor()
         curs.execute("SELECT * FROM profesor")
         profesor = curs.fetchall()
         curs.close()
         profe = []
         for rows in profesor:
-            data = {"id" :rows [0],"nombre" :rows[1], "apellido":rows[2]}
+            data = {"id": rows[0], "nombre": rows[1], "apellido": rows[2]}
             profe.append(data)
-            
-        
+
         return render_template('estudiante/register.html', payload=payload, profe=profe)
     except Exception as e:
         print(e)
@@ -208,7 +204,7 @@ def register_caso():
 # Registrar Estudiante
 @app.route('/register_student', methods=['POST'])
 def register_student():
-    msg= ''
+    msg = ''
     if request.method == 'POST':
         correo = request.form['correo']
         contraseña = request.form['contraseña']
@@ -218,12 +214,36 @@ def register_student():
         documento = request.form['documento']
         programa = request.form['programa']
         cursor = mysql.connection.cursor()
-        cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)',(str(nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
-        
+        cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)', (str(
+            nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
+
         mysql.connection.commit()
         cursor.close()
-        msg = 'La consulta se ha realizado correctamente!'
-    return redirect(url_for('index_est', msg=msg))
+        msg = 'Te has registrado correctamente!'
+    return redirect(url_for('index_est'))
+
+# Registrar Profesor
+
+
+@app.route('/register_profesor', methods=['POST'])
+def register_profesor():
+    msg = ''
+    if request.method == 'POST':
+        correo = request.form['correo']
+        contraseña = request.form['contraseña']
+        nombre = request.form['nombre']
+        apellido = request.form['apellido']
+        # tipo = request.form['tipo']
+        # documento = request.form['documento']
+        # programa = request.form['programa']
+        cursor = mysql.connection.cursor()
+        cursor.execute('INSERT INTO profesor(nombre, apellido, correo, password) VALUES (%s, %s, %s, %s)', (str(
+            nombre), str(apellido), str(correo), str(contraseña)))
+
+        mysql.connection.commit()
+        cursor.close()
+        msg = 'Se ha registrado correctamente!'
+    return redirect(url_for('index_admin', msg=msg))
 
 
 # Index Estudiante
@@ -248,46 +268,46 @@ def index_est():
             for rows in datos:
                 result = {
                     'nombre_estudiante': rows[0],
-                'apellido_estudiante': rows[1],
-                'programa': rows[4],
-                'fecha': rows[6],
-                'profesor': rows[7],
-                'apellido_profesor':rows[8],
-                'descripcion':rows[9]
+                    'apellido_estudiante': rows[1],
+                    'programa': rows[4],
+                    'fecha': rows[6],
+                    'profesor': rows[7],
+                    'apellido_profesor': rows[8],
+                    'descripcion': rows[9]
                 }
                 payload_search.append(result)
         try:
-            cursor = mysql.connection.cursor() 
+            cursor = mysql.connection.cursor()
             cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, c.descripcion FROM consulta c 
                            INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE c.id_estudiante=%s''', (id_est,))
-        
+
             modulo = cursor.fetchall()
 
             cursor.close()
             payload = []
             for row in modulo:
                 data = {
-                'nombre_estudiante': row[0],
-                'apellido_estudiante': row[1],
-                'programa': row[4],
-                'fecha': row[6],
-                'profesor': row[7],
-                'apellido_profesor':row[8],
-                'descripcion':row[9]
+                    'nombre_estudiante': row[0],
+                    'apellido_estudiante': row[1],
+                    'programa': row[4],
+                    'fecha': row[6],
+                    'profesor': row[7],
+                    'apellido_profesor': row[8],
+                    'descripcion': row[9]
                 }
                 payload.append(data)
-            
-            #Paginación
+
+            # Paginación
             page = int(request.args.get(get_page_parameter(), 1))
             per_page = 10  # Cantidad de resultados por página
             offset = (page - 1) * per_page
-            pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
+            pagination = Pagination(page=page, per_page=per_page, total=len(
+                payload), css_framework='bootstrap5')
 
             return render_template('estudiante/index.html', payload=payload[offset:offset + per_page], id_est=id_est, pagination=pagination, payload_search=payload_search)
         except Exception as e:
             print(e)
             return jsonify({"informacion": str(e)})
-
 
 
 # Actulizar Perfil Estudiante (Pendiente)
@@ -304,7 +324,8 @@ def login():
         correo = request.form['correo']
         contraseña = request.form['contraseña']
         cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM administrador WHERE correo = %s AND contraseña = %s', (correo, contraseña))
+        cursor.execute(
+            'SELECT * FROM administrador WHERE correo = %s AND contraseña = %s', (correo, contraseña))
         user = cursor.fetchone()
         print(user)
         if user:
@@ -315,7 +336,7 @@ def login():
             return render_template('admin/login.html', msg=msg)
 
 
-@app.route('/login_p', methods=['POST']) #Login_Profesor
+@app.route('/login_p', methods=['POST'])  # Login_Profesor
 def login_p():
     msg = ''
     if request.method == 'POST':
@@ -335,7 +356,7 @@ def login_p():
         else:
             msg = 'Los datos ingresados son incorrectos'
             return render_template('profesor/login.html', msg=msg)
-        
+
 
 @app.route('/login_estu', methods=['POST'])
 def login_estu():
@@ -368,20 +389,20 @@ def login_estu():
             response.set_cookie('apellido', session['apellido'])
             response.set_cookie('correo', session['correo'])
             return response
-            
+
         else:
             msg = 'Los datos ingresados son incorrectos'
             return render_template('estudiante/login.html', msg=msg)
 
-        
+
 @app.route('/mis_consultas')
 def mis_consultas():
-     id_est = session['id']
-     print(id_est)
-     print(session.keys())
-     if 'id' not in session:
+    id_est = session['id']
+    print(id_est)
+    print(session.keys())
+    if 'id' not in session:
         return redirect(url_for('login_est'))
-     else:
+    else:
         if request.method == 'GET':
             search = request.args.get('search')
             cursor = mysql.connection.cursor()
@@ -396,18 +417,18 @@ def mis_consultas():
                     'nombre_estudiante': rows[0],
                     'apellido_estudiante': rows[1],
                     'fecha': rows[2],
-                    'descripcion':rows[3],
-                    'modalidad':rows[4],
+                    'descripcion': rows[3],
+                    'modalidad': rows[4],
                     'nombre_profesor': rows[5],
                     'apellido_profesor': rows[6]
                 }
                 payload_search.append(result)
         try:
-            cursor = mysql.connection.cursor() 
+            cursor = mysql.connection.cursor()
             cursor.execute('''
                            SELECT e.nombre, e.apellido, r.fecha as FECHA, c.descripcion AS DESCRIPCION, r.modalidad, p.nombre AS PROFESOR, p.apellido, r.estado FROM res_consulta r INNER JOIN estudiante e ON
                            r.id_estudiante = e.id INNER JOIN consulta c ON r.id_consulta = c.id_consulta INNER JOIN profesor p ON r.id_profesor = p.id WHERE r.id_estudiante=%s''', (id_est,))
-        
+
             modulo = cursor.fetchall()
             print(modulo)
 
@@ -415,22 +436,23 @@ def mis_consultas():
             payload = []
             for row in modulo:
                 data = {
-                'nombre_estudiante': row[0],
-                'apellido_estudiante': row[1],
-                'fecha': row[2],
-                'descripcion':row[3],
-                'modalidad':row[4],
-                'nombre_profesor': row[5],
-                'apellido_profesor': row[6],
-                'estado': row[7]
+                    'nombre_estudiante': row[0],
+                    'apellido_estudiante': row[1],
+                    'fecha': row[2],
+                    'descripcion': row[3],
+                    'modalidad': row[4],
+                    'nombre_profesor': row[5],
+                    'apellido_profesor': row[6],
+                    'estado': row[7]
                 }
                 payload.append(data)
-            
-            #Paginación
+
+            # Paginación
             page = int(request.args.get(get_page_parameter(), 1))
             per_page = 10  # Cantidad de resultados por página
             offset = (page - 1) * per_page
-            pagination = Pagination(page=page, per_page=per_page, total=len(payload), css_framework='bootstrap5')
+            pagination = Pagination(page=page, per_page=per_page, total=len(
+                payload), css_framework='bootstrap5')
 
             return render_template('estudiante/res_consulta.html', payload=payload[offset:offset + per_page], id_est=id_est, pagination=pagination, payload_search=payload_search)
         except Exception as e:
@@ -438,7 +460,7 @@ def mis_consultas():
             return jsonify({"informacion": str(e)})
 
 
-@app.route('/res_cons', methods=['POST']) #Registrar Consulta estudiante
+@app.route('/res_cons', methods=['POST'])  # Registrar Consulta estudiante
 def res_cons():
     user = session['id']
     print(user)
@@ -448,14 +470,16 @@ def res_cons():
         consulta = request.form['consulta']
         fecha = request.form['fecha']
         cons = mysql.connection.cursor()
-        cons.execute('SELECT * FROM profesor WHERE nombre = %s', [str(profesor)])
+        cons.execute('SELECT * FROM profesor WHERE nombre = %s',
+                     [str(profesor)])
         result = cons.fetchone()
         if result:
             id_profesor = result[0]
             print(id_profesor)
         cons.close()
         con = mysql.connection.cursor()
-        con.execute('SELECT * FROM modulo WHERE nombre_modulo = %s', [str(modulo)])
+        con.execute(
+            'SELECT * FROM modulo WHERE nombre_modulo = %s', [str(modulo)])
         res = con.fetchone()
         if res:
             global id_modulo
@@ -463,20 +487,20 @@ def res_cons():
             print(id_modulo)
         con.close()
         cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO consulta (id_estudiante, id_profesor, fecha, descripcion, id_modulo) VALUES (%s, %s, %s, %s, %s)',(user, id_profesor, fecha, consulta, id_modulo))
+        cur.execute('INSERT INTO consulta (id_estudiante, id_profesor, fecha, descripcion, id_modulo) VALUES (%s, %s, %s, %s, %s)',
+                    (user, id_profesor, fecha, consulta, id_modulo))
         mysql.connection.commit()
         cur.close()
         msg = 'La consulta se ha realizado correctamente!'
     return redirect(url_for('index_est', msg=msg))
 
 
-
-# Actualizar consulta profesor 
+# Actualizar consulta profesor
 @app.route('/update/<int:id>', methods=['GET'])
 def update(id):
     global id_consulta
-    id_consulta =0
-    id_consulta= id
+    id_consulta = 0
+    id_consulta = id
     print(id)
     ''''No es obligación utilizar el session del profesor, solo estoy trayendo la info 
         de la página principal, que si lo tiene, en está caso solo utilizo la sentencia
@@ -485,29 +509,29 @@ def update(id):
         cursor = mysql.connection.cursor()
         cursor.execute('''SELECT est.nombre, est.apellido, est.tipo_documento, est.numero_estudiante, est.programa, est.correo, c.fecha, p.nombre, p.apellido, c.descripcion FROM consulta c 
                            INNER JOIN estudiante est ON c.id_estudiante = est.id INNER JOIN profesor p ON c.id_profesor = p.id WHERE c.id_consulta=%s''', (id_consulta,))
-        
+
         consulta = cursor.fetchall()
         cursor.close()
         payload_search = []
         for rows in consulta:
             result = {
-            'nombre_estudiante': rows[0],
-            'apellido_estudiante': rows[1],
-            'programa': rows[4],
-            'fecha': rows[6],
-            'profesor': rows[7],
-            'apellido_profesor':rows[8],
-            'descripcion':rows[9]
+                'nombre_estudiante': rows[0],
+                'apellido_estudiante': rows[1],
+                'programa': rows[4],
+                'fecha': rows[6],
+                'profesor': rows[7],
+                'apellido_profesor': rows[8],
+                'descripcion': rows[9]
             }
             payload_search.append(result)
         cursor.close()
-            
+
         return render_template('profesor/editar_consulta.html', payload_search=payload_search)
     except Exception as e:
-            return render_template('error.html', error_message=str(e))
+        return render_template('error.html', error_message=str(e))
 
 
-@app.route('/aceptar/<int:id>', methods=['POST']) #Aceptar consulta
+@app.route('/aceptar/<int:id>', methods=['POST'])  # Aceptar consulta
 def aceptar(id):
     id_consulta = id
     print(id_consulta)
@@ -523,15 +547,16 @@ def aceptar(id):
         fecha = cons[3]
         descripcion = cons[4]
         curs = mysql.connection.cursor()
-        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, modalidad, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)''',(id_consulta, id_est, id_profe, fecha, descripcion, 'Presencial', 'Aceptado'))
+        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, modalidad, estado) VALUES (%s, %s, %s, %s, %s, %s, %s)''',
+                     (id_consulta, id_est, id_profe, fecha, descripcion, 'Presencial', 'Aceptado'))
         msg = 'Se actualizo la consuta correctamente    '
         mysql.connection.commit()
         curs.close()
         msg = 'La consulta se ha realizado correctamente!'
     return redirect(url_for('index_profe', msg=msg))
-    
 
-@app.route('/declinar/<int:id>', methods=['POST']) #Declinar consulta
+
+@app.route('/declinar/<int:id>', methods=['POST'])  # Declinar consulta
 def declinar(id):
     id_consulta = id
     print(id_consulta)
@@ -547,20 +572,21 @@ def declinar(id):
         fecha = cons[3]
         descripcion = cons[4]
         curs = mysql.connection.cursor()
-        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, estado) VALUES (%s, %s, %s, %s, %s, %s)''',(id_consulta, id_est, id_profe, fecha, descripcion, 'Declinado'))
+        curs.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, estado) VALUES (%s, %s, %s, %s, %s, %s)''',
+                     (id_consulta, id_est, id_profe, fecha, descripcion, 'Declinado'))
         msg = 'Se actualizo la consuta correctamente    '
         mysql.connection.commit()
         curs.close()
         msg = 'La consulta se ha actualizado correctamente!'
     return redirect(url_for('index_profe', msg=msg))
 
-    
 
-@app.route('/update_res_cons', methods=['POST']) #Actualiza i/u guardar Consulta estudiante by profesor
+# Actualiza i/u guardar Consulta estudiante by profesor
+@app.route('/update_res_cons', methods=['POST'])
 def update_res_cons():
-    
+
     if request.method == 'POST':
-        
+
         nombre_est = request.form['nombre_estudiante']
         profesor = request.form['profesor']
         fecha = request.form['fecha']
@@ -568,23 +594,25 @@ def update_res_cons():
         modalidad = request.form['modalidad']
         estado = request.form['estado']
         cons = mysql.connection.cursor()
-        cons.execute('SELECT * FROM profesor WHERE nombre = %s', [str(profesor)])
+        cons.execute('SELECT * FROM profesor WHERE nombre = %s',
+                     [str(profesor)])
         result = cons.fetchone()
         if result:
             id_profesor = result[0]
             print(id_profesor)
         cons.close()
         con = mysql.connection.cursor()
-        con.execute('SELECT * FROM estudiante WHERE nombre = %s', [str(nombre_est)])
+        con.execute('SELECT * FROM estudiante WHERE nombre = %s',
+                    [str(nombre_est)])
         res = con.fetchone()
         if res:
-            global id_est #Id_estudiante
+            global id_est  # Id_estudiante
             id_est = res[0]
             print(id_est)
         con.close()
         cur = mysql.connection.cursor()
         cur.execute('''INSERT INTO res_consulta (id_consulta, id_estudiante, id_profesor, fecha, asunto, modalidad, estado) VALUES 
-                    (%s, %s, %s, %s, %s, %s, %s)''',(str(id_consulta), str(id_est), str(id_profesor), str(fecha), str(descripcion), str(modalidad), str(estado)))
+                    (%s, %s, %s, %s, %s, %s, %s)''', (str(id_consulta), str(id_est), str(id_profesor), str(fecha), str(descripcion), str(modalidad), str(estado)))
         msg = 'Se actualizo la consuta correctamente    '
         mysql.connection.commit()
         cur.close()
@@ -592,13 +620,7 @@ def update_res_cons():
     return redirect(url_for('index_profe', msg=msg))
 
 
-
-
-
-
 # Registrar Profesor (Pendiente)
-
-
 
  # Cerrar sesion
 @app.route('/logout')
@@ -611,7 +633,7 @@ def logout():
     session.pop('correo', None)
     session.pop('contraseña', None)
     session.clear()
-    
+
     # session.cookies.clear()
     return redirect(url_for('index'))
 
