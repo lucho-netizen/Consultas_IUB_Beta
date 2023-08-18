@@ -1,7 +1,7 @@
 from tempfile import template
 from MySQLdb.cursors import Cursor
 from xml.sax.handler import feature_external_ges
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_file
 from flask.wrappers import Request
 from flask import request
 from flask_paginate import Pagination, get_page_parameter
@@ -9,6 +9,9 @@ from flask_mysqldb import MySQL
 from datetime import date, datetime, timedelta
 from flask import make_response
 import http.cookiejar
+import io
+import openpyxl
+
 
 app = Flask(__name__)
 
@@ -40,6 +43,28 @@ def index_user():
 @app.route('/base')
 def base():
     return render_template('admin/home.html')
+
+
+@app.route('/export_profesores_excel', methods=['GET'])
+def export_profesores_excel():
+    cursor = mysql.connection.cursor()
+    cursor.execute('SELECT nombre, apellido, correo FROM profesor')
+    profesores = cursor.fetchall()
+    cursor.close()
+
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+
+    # Agregar encabezados y datos
+    sheet.append(['Nombre', 'Apellido', 'Correo'])  # Nombres de las columnas
+    for prof in profesores:
+        sheet.append([prof[0], prof[1], prof[2]])  # Ajusta los índices
+
+    excel_buffer = io.BytesIO()
+    workbook.save(excel_buffer)
+    excel_buffer.seek(0)
+
+    return send_file(excel_buffer, as_attachment=True, download_name='profesores.xlsx')
 
 
 # Index Admin
@@ -417,6 +442,7 @@ def login_estu():
 
 @app.route('/mis_consultas')
 def mis_consultas():
+    global id_est
     id_est = session['id']
     print(id_est)
     print(session.keys())
@@ -643,7 +669,44 @@ def update_res_cons():
     return redirect(url_for('index_profe', msg=msg))
 
 
-# Registrar Profesor (Pendiente)
+
+
+@app.route('/exporta_mis_consultas_excel', methods=['GET'])
+def exporta_mis_consultas_excel():
+    id_est = session['id']
+    cursor = mysql.connection.cursor()
+    cursor.execute('''SELECT e.nombre, e.apellido, r.fecha as FECHA, c.descripcion AS DESCRIPCION, r.modalidad, p.nombre AS PROFESOR, p.apellido, r.estado FROM res_consulta r INNER JOIN estudiante e ON
+                           r.id_estudiante = e.id INNER JOIN consulta c ON r.id_consulta = c.id_consulta INNER JOIN profesor p ON r.id_profesor = p.id WHERE r.id_estudiante=%s''', (id_est,))
+                      
+    consultas = cursor.fetchall()
+    
+
+    workbook = openpyxl.Workbook()
+    sheet = workbook.active
+
+    # Agregar encabezados y datos
+    sheet.append(['Nombre', 'Apellido', 'Fecha', 'Descripción', 'Modalidad', 'Profesor', 'Estado'])  # Nombres de las columnas
+    for consulta in consultas:
+        nombre = consulta['nombre_estudiante']
+        apellido = consulta[1]
+        fecha = consulta[2]
+        descripcion = consulta[3]
+        modalidad = consulta[4]
+        profesor_nombre = consulta[5]
+        profesor_apellido = consulta[6]
+        estado = consulta[7]
+
+        sheet.append([nombre, apellido, fecha, descripcion, modalidad, profesor_nombre, profesor_apellido, estado])
+
+    excel_buffer = io.BytesIO()
+    workbook.save(excel_buffer)
+    excel_buffer.seek(0)
+    cursor.close()
+
+    return send_file(excel_buffer, as_attachment=True, download_name='mis_consultas.xlsx')
+
+
+
 
  # Cerrar sesion
 @app.route('/logout')
