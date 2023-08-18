@@ -64,31 +64,49 @@
 						</div>
 
 						<div class="form-bottom">
-							<form role="form" action="/register_profesor" method="post" class="registration-form">
+							<form role="form" id="register_profesor" method="post">
 
 								<div class="form-group">
 									<label>Nombre </label>
-									<input type="text" name="nombre" placeholder="Nombres"
-										class="form-first-name form-control" id="form-first-name">
+									<input type="text" id="nombre" name="nombre" placeholder="Nombres"
+										class="form-first-name form-control">
 								</div>
 								<div class="form-group">
 									<label>Apellido</label>
-									<input type="text" name="apellido" placeholder="Apellidos"
-										class="form-last-name form-control" id="form-last-name">
+									<input type="text" id="apellido" name="apellido" placeholder="Apellidos"
+										class="form-last-name form-control">
 								</div>
 								
 								<div class="form-group">
 									<label>Email</label>
-									<input type="text" name="correo" placeholder="Correo institucional"
-										class="form-email form-control" id="form-email">
+									<input type="email" id="correo" name="correo" placeholder="Correo institucional"
+										class="form-email form-control">
 								</div>
 								<div class="form-group">
 									<label>Contraseña</label>
-									<input type="password" name="contraseña" placeholder="contraseña"
-										class="form-last-name form-control" id="form-password">
+									<input type="password" id="contraseña" name="contraseña" placeholder="contraseña"
+										class="form-last-name form-control">
 								</div>
 								<button type="submit" class="btn">Regístrame</button>
 							</form>
+							<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+							<script>
+							  document.getElementById('register_profesor').addEventListener('submit', function(event) {
+								event.preventDefault(); // Prevent form submission
+				  
+							  const form = event.target;
+							  var formData = new FormData(form);
+				  
+							  axios.post('/register_profesor', Object.fromEntries(formData))
+								  .then(response => {
+									console.log(response.data);
+									alert('Usuario registrado exitosamente');
+							  })
+							  .catch(error => {
+								alert('No se registró la consulta');
+							  })
+							   });
+							</script>	
 						</div>
 					</div>
 				</div>

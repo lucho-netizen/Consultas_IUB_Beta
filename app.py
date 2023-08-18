@@ -213,15 +213,15 @@ def register_caso():
 # Registrar Estudiante
 @app.route('/register_student', methods=['POST'])
 def register_student():
-    msg= ''
-    if request.method == 'POST':
-        correo = request.form['correo']
-        contraseña = request.form['contraseña']
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
-        tipo = request.form['tipo']
-        documento = request.form['documento']
-        programa = request.form['programa']
+    data = request.get_json()
+    try:
+        correo = data['correo']
+        contraseña = data['contraseña']
+        nombre = data['nombre']
+        apellido = data['apellido']
+        tipo = data['tipo']
+        documento = data['documento']
+        programa = data['programa']
         cursor = mysql.connection.cursor()
         cursor.execute('INSERT INTO estudiante(nombre, apellido, tipo_documento, programa, correo, contraseña, numero_estudiante) VALUES (%s, %s, %s, %s, %s, %s, %s)',(str(nombre), str(apellido), str(tipo), str(programa), str(correo), str(contraseña), str(documento)))
         
@@ -231,19 +231,22 @@ def register_student():
         # Agrega el ID a la sesión
         session['id'] = new_student_id
         cursor.close()
-        msg = 'La consulta se ha realizado correctamente!'
-    return redirect(url_for('index_est', msg=msg))
+        return jsonify({"info": "Te has registrado correctamente"})
+    except Exception as e:
+        print(e)
+        return render_template('estudiante/index.html') #Sino sirve eliminan esta linea y ya
+
 
 
 # Registrar Profesor
 @app.route('/register_profesor', methods=['POST'])
 def register_profesor():
-    msg = ''
-    if request.method == 'POST':
-        correo = request.form['correo']
-        contraseña = request.form['contraseña']
-        nombre = request.form['nombre']
-        apellido = request.form['apellido']
+    try:
+        data = request.get_json()
+        correo = data['correo']
+        contraseña = data['contraseña']
+        nombre = data['nombre']
+        apellido = data['apellido']
         # tipo = request.form['tipo']
         # documento = request.form['documento']
         # programa = request.form['programa']
@@ -253,8 +256,14 @@ def register_profesor():
 
         mysql.connection.commit()
         cursor.close()
-        msg = 'Se ha registrado correctamente!'
-    return redirect(url_for('index_admin', msg=msg))
+        return jsonify({"info": "Docente registrado correctamente"})
+    except Exception as e:
+        print(e)
+        return render_template('admin/index.html', success=False, error=str(e))
+
+
+
+    
 
 
 # Index Estudiante
@@ -475,14 +484,15 @@ def mis_consultas():
 def res_cons():
     user = session['id']
     print(user)
-    if request.method == 'POST':
-        profesor = request.form['profesor']
-        modulo = request.form['modulo']
-        consulta = request.form['consulta']
-        fecha = request.form['fecha']
+    try: 
+        data = request.get_json()
+        profesor = data['profesor']
+        modulo = data['modulo']
+        consulta = data['consulta']
+        fecha = data['fecha']
         cons = mysql.connection.cursor()
         cons.execute('SELECT * FROM profesor WHERE nombre = %s',
-                     [str(profesor)])
+                    [str(profesor)])
         result = cons.fetchone()
         if result:
             id_profesor = result[0]
@@ -502,8 +512,10 @@ def res_cons():
                     (user, id_profesor, fecha, consulta, id_modulo))
         mysql.connection.commit()
         cur.close()
-        msg = 'La consulta se ha realizado correctamente!'
-    return redirect(url_for('index_est', msg=msg))
+        return jsonify({"info": "Consulta registrada correctamente"})
+    except Exception as e:
+        print(e)
+        return jsonify({"informacion": str(e)})
 
 
 # Actualizar consulta profesor

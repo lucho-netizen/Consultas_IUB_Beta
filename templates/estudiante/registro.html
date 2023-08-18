@@ -46,16 +46,7 @@
 	<div class="top-content">
 		<div class="inner-bg">
 			<div class="container">
-				<div class="row">
-					<div class="col-sm-8 col-sm-offset-2 text">
-						<h1><strong>HOLA</strong> Estudiante IUB! Registrate aquí</h1>
-						<div class="description">
-							<p>Vamos a llenar este formulario <strong>"Con datos basicos"</strong> no te preocupes, tus
-								datos no se compartirán con terceros, comencemos!</p>
-						</div>
-					</div>
-				</div>
-
+			
 				<div class="col-sm-5 center-form">
 					<div class="form-box">
 						<div class="form-top">
@@ -69,21 +60,21 @@
 						</div>
 
 						<div class="form-bottom">
-							<form role="form" action="/register_student" method="post" class="registration-form">
+							<form role="form" id="register_student" method="post" class="registration-form">
 
 								<div class="form-group">
 									<label class="sr-only" for="form-first-name">Nombres </label>
 									<input type="text" name="nombre" placeholder="Nombres"
-										class="form-first-name form-control" id="form-first-name">
+										class="form-first-name form-control" id="nombre">
 								</div>
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name">apellidos</label>
 									<input type="text" name="apellido" placeholder="Apellidos"
-										class="form-last-name form-control" id="form-last-name">
+										class="form-last-name form-control" id="apellido">
 								</div>
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name"></label>
-									<select value="tipo" name="tipo">
+									<select value="tipo" name="tipo" id="tipo">
 										<option value="">Seleccione</option>
 										{% for doc in docs %} 
 										<li>
@@ -95,12 +86,12 @@
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name"></label>
 									<input type="text" name="documento" placeholder="numero documento"
-										class="form-last-name form-control" id="form-documento" max="10" min="10">
+										class="form-last-name form-control" id="documento" max="10" min="10">
 
 								</div>
 								<div class="form-group">
 									<label class="sr-only" for="form-last-name">Programas</label>
-									<select value="programa" name="programa">
+									<select value="programa" name="programa" id="program">
 										<option value="">Seleccione</option>
 										{% for program in program %}
 									<li>
@@ -112,15 +103,33 @@
 								<div class="form-group">
 									<label class="sr-only" for="form-email">Email</label>
 									<input type="text" name="correo" placeholder="Correo institucional"
-										class="form-email form-control" id="form-email">
+										class="form-email form-control" id="correo">
 								</div>
 								<div class="form-group">
-									<label class="sr-only" for="form-last-name">apellidos</label>
+									<label class="sr-only" for="form-last-name">Contraseña</label>
 									<input type="password" name="contraseña" placeholder="contraseña"
-										class="form-last-name form-control" id="form-password">
+										class="form-last-name form-control" id="contraseña">
 								</div>
 								<button type="submit" class="btn">Regístrame</button>
 							</form>
+							<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+							<script>
+							  document.getElementById('register_student').addEventListener('submit', function(event) {
+								event.preventDefault(); // Prevent form submission
+				  
+							  const form = event.target;
+							  var formData = new FormData(form);
+				  
+							  axios.post('/register_student', Object.fromEntries(formData))
+								  .then(response => {
+									console.log(response.data);
+									alert('Usuario registrado exitosamente');
+							  })
+							  .catch(error => {
+								alert('No se registró la consulta');
+							  })
+							   });
+							</script>				  
 						</div>
 					</div>
 				</div>
